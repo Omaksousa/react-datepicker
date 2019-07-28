@@ -51,6 +51,7 @@ const isDropdownSelect = (element = {}) => {
 export default class Calendar extends React.Component {
   static propTypes = {
     adjustDateOnChange: PropTypes.bool,
+    calendar: PropTypes.oneOf(["gregorian", "hijri"]),
     className: PropTypes.string,
     children: PropTypes.node,
     container: PropTypes.func,
@@ -458,9 +459,15 @@ export default class Calendar extends React.Component {
     if (this.props.showMonthYearDropdown) {
       classes.push("react-datepicker__current-month--hasMonthYearDropdown");
     }
+    // console.log(this.props)
     return (
       <div className={classes.join(" ")}>
-        {formatDate(date, this.props.dateFormat, this.props.locale)}
+        {formatDate(
+          date,
+          this.props.dateFormat,
+          this.props.locale,
+          this.props.calendar
+        )}
       </div>
     );
   };
@@ -479,9 +486,10 @@ export default class Calendar extends React.Component {
         onChange={this.changeYear}
         minDate={this.props.minDate}
         maxDate={this.props.maxDate}
-        year={getYear(this.state.date)}
+        year={getYear(this.state.date, this.props.calendar)}
         scrollableYearDropdown={this.props.scrollableYearDropdown}
         yearDropdownItemNumber={this.props.yearDropdownItemNumber}
+        calendar={this.props.calendar}
       />
     );
   };
@@ -497,6 +505,7 @@ export default class Calendar extends React.Component {
         onChange={this.changeMonth}
         month={getMonth(this.state.date)}
         useShortMonthInDropdown={this.props.useShortMonthInDropdown}
+        calendar={this.props.calendar}
       />
     );
   };
@@ -645,6 +654,7 @@ export default class Calendar extends React.Component {
             selectsEnd={this.props.selectsEnd}
             showWeekNumbers={this.props.showWeekNumbers}
             startDate={this.props.startDate}
+            calendar={this.props.calendar}
             endDate={this.props.endDate}
             peekNextMonth={this.props.peekNextMonth}
             setOpen={this.props.setOpen}

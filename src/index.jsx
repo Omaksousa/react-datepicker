@@ -153,6 +153,7 @@ export default class DatePicker extends React.Component {
     showTimeSelectOnly: PropTypes.bool,
     timeFormat: PropTypes.string,
     timeIntervals: PropTypes.number,
+    calendar: PropTypes.oneOf(["gregorian", "hijri"]),
     minTime: PropTypes.instanceOf(Date),
     maxTime: PropTypes.instanceOf(Date),
     excludeTimes: PropTypes.array,
@@ -668,6 +669,7 @@ export default class DatePicker extends React.Component {
         onTimeChange={this.handleTimeChange}
         timeFormat={this.props.timeFormat}
         timeIntervals={this.props.timeIntervals}
+        calendar={this.props.calendar}
         minTime={this.props.minTime}
         maxTime={this.props.maxTime}
         excludeTimes={this.props.excludeTimes}

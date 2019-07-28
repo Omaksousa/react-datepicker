@@ -11,6 +11,7 @@ export default class Week extends React.Component {
     };
   }
   static propTypes = {
+    calendar: PropTypes.oneOf(["gregorian", "hijri"]),
     disabledKeyboardNavigation: PropTypes.bool,
     day: PropTypes.instanceOf(Date).isRequired,
     dayClassName: PropTypes.func,
@@ -107,6 +108,7 @@ export default class Week extends React.Component {
             selectsEnd={this.props.selectsEnd}
             startDate={this.props.startDate}
             endDate={this.props.endDate}
+            calendar={this.props.calendar}
             dayClassName={this.props.dayClassName}
             renderDayContents={this.props.renderDayContents}
             disabledKeyboardNavigation={this.props.disabledKeyboardNavigation}

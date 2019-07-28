@@ -8,6 +8,7 @@ const FIXED_HEIGHT_STANDARD_WEEK_COUNT = 6;
 
 export default class Month extends React.Component {
   static propTypes = {
+    calendar: PropTypes.oneOf(["gregorian", "hijri"]),
     disabledKeyboardNavigation: PropTypes.bool,
     day: PropTypes.instanceOf(Date).isRequired,
     dayClassName: PropTypes.func,
@@ -121,6 +122,7 @@ export default class Month extends React.Component {
           selectsEnd={this.props.selectsEnd}
           showWeekNumber={this.props.showWeekNumbers}
           startDate={this.props.startDate}
+          calendar={this.props.calendar}
           endDate={this.props.endDate}
           dayClassName={this.props.dayClassName}
           setOpen={this.props.setOpen}

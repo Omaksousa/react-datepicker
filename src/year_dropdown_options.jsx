@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import classNames from "classnames";
-import { getYear } from "./date_utils";
+import { getYear, CALENDAR_TYPES, hijriToGregorian } from "./date_utils";
 
 function generateYears(year, noOfYear, minDate, maxDate) {
   var list = [];
@@ -27,6 +27,7 @@ function generateYears(year, noOfYear, minDate, maxDate) {
 
 export default class YearDropdownOptions extends React.Component {
   static propTypes = {
+    calendar: PropTypes.oneOf(["gregorian", "hijri"]),
     minDate: PropTypes.instanceOf(Date),
     maxDate: PropTypes.instanceOf(Date),
     onCancel: PropTypes.func.isRequired,
@@ -54,25 +55,31 @@ export default class YearDropdownOptions extends React.Component {
 
   renderOptions = () => {
     var selectedYear = this.props.year;
-    var options = this.state.yearsList.map(year => (
-      <div
-        className={
-          selectedYear === year
-            ? "react-datepicker__year-option react-datepicker__year-option--selected_year"
-            : "react-datepicker__year-option"
-        }
-        key={year}
-        ref={year}
-        onClick={this.onChange.bind(this, year)}
-      >
-        {selectedYear === year ? (
-          <span className="react-datepicker__year-option--selected">✓</span>
-        ) : (
-          ""
-        )}
-        {year}
-      </div>
-    ));
+    var options = this.state.yearsList.map(year => {
+      const dateObj =
+        this.props.calendar === CALENDAR_TYPES.HIJRI
+          ? hijriToGregorian(year + "")
+          : new Date(year + "");
+      return (
+        <div
+          className={
+            selectedYear === year
+              ? "react-datepicker__year-option react-datepicker__year-option--selected_year"
+              : "react-datepicker__year-option"
+          }
+          key={year}
+          ref={year}
+          onClick={this.onChange.bind(this, dateObj.getFullYear())}
+        >
+          {selectedYear === year ? (
+            <span className="react-datepicker__year-option--selected">✓</span>
+          ) : (
+            ""
+          )}
+          {year}
+        </div>
+      );
+    });
 
     const minYear = this.props.minDate ? getYear(this.props.minDate) : null;
     const maxYear = this.props.maxDate ? getYear(this.props.maxDate) : null;

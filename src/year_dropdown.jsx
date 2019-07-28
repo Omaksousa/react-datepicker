@@ -2,12 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 import YearDropdownOptions from "./year_dropdown_options";
 import onClickOutside from "react-onclickoutside";
-import { getYear } from "./date_utils";
+import { getYear, CALENDAR_TYPES, hijriToGregorian } from "./date_utils";
 
 var WrappedYearDropdownOptions = onClickOutside(YearDropdownOptions);
 
 export default class YearDropdown extends React.Component {
   static propTypes = {
+    calendar: PropTypes.oneOf(["gregorian", "hijri"]),
     adjustDateOnChange: PropTypes.bool,
     dropdownMode: PropTypes.oneOf(["scroll", "select"]).isRequired,
     maxDate: PropTypes.instanceOf(Date),
@@ -26,13 +27,24 @@ export default class YearDropdown extends React.Component {
   };
 
   renderSelectOptions = () => {
-    const minYear = this.props.minDate ? getYear(this.props.minDate) : 1900;
-    const maxYear = this.props.maxDate ? getYear(this.props.maxDate) : 2100;
-
+    const defaultMinYear =
+      this.props.calendar === CALENDAR_TYPES.HIJRI ? 1300 : 1900;
+    const defaultMaxYear =
+      this.props.calendar === CALENDAR_TYPES.HIJRI ? 1500 : 2100;
+    const minYear = this.props.minDate
+      ? getYear(this.props.minDate)
+      : defaultMinYear;
+    const maxYear = this.props.maxDate
+      ? getYear(this.props.maxDate)
+      : defaultMaxYear;
     const options = [];
     for (let i = minYear; i <= maxYear; i++) {
+      const dateObj =
+        this.props.calendar === CALENDAR_TYPES.HIJRI
+          ? hijriToGregorian(i + "")
+          : new Date(i + "");
       options.push(
-        <option key={i} value={i}>
+        <option key={i} value={dateObj.getFullYear()}>
           {i}
         </option>
       );
@@ -44,15 +56,18 @@ export default class YearDropdown extends React.Component {
     this.onChange(e.target.value);
   };
 
-  renderSelectMode = () => (
-    <select
-      value={this.props.year}
-      className="react-datepicker__year-select"
-      onChange={this.onSelectChange}
-    >
-      {this.renderSelectOptions()}
-    </select>
-  );
+  renderSelectMode = () => {
+    const year = getYear(this.props.date);
+    return (
+      <select
+        value={year}
+        className="react-datepicker__year-select"
+        onChange={this.onSelectChange}
+      >
+        {this.renderSelectOptions()}
+      </select>
+    );
+  };
 
   renderReadView = visible => (
     <div
@@ -79,6 +94,7 @@ export default class YearDropdown extends React.Component {
       maxDate={this.props.maxDate}
       scrollableYearDropdown={this.props.scrollableYearDropdown}
       yearDropdownItemNumber={this.props.yearDropdownItemNumber}
+      calendar={this.props.calendar}
     />
   );
 

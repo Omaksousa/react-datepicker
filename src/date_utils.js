@@ -17,9 +17,9 @@ import getSeconds from "date-fns/getSeconds";
 import getMinutes from "date-fns/getMinutes";
 import getHours from "date-fns/getHours";
 import getDay from "date-fns/getDay";
-import getDate from "date-fns/getDate";
-import getMonth from "date-fns/getMonth";
-import getYear from "date-fns/getYear";
+import fnsGetDate from "date-fns/getDate";
+import fnsGetMonth from "date-fns/getMonth";
+import fnsGetYear from "date-fns/getYear";
 import getTime from "date-fns/getTime";
 import setSeconds from "date-fns/setSeconds";
 import setMinutes from "date-fns/setMinutes";
@@ -49,7 +49,7 @@ import toDate from "date-fns/toDate";
 import parse from "date-fns/parse";
 import parseISO from "date-fns/parseISO";
 import longFormatters from "date-fns/_lib/format/longFormatters";
-
+import "hijri-date";
 // This RegExp catches symbols escaped by quotes, and also
 // sequences of symbols P, p, and the combinations like `PPPPPPPppppp`
 var longFormattingTokensRegExp = /P+p+|P+|p+|''|'(''|[^'])+('|$)|./g;
@@ -127,7 +127,16 @@ export function isValid(date) {
 
 // ** Date Formatting **
 
-export function formatDate(date, formatStr, locale) {
+const CALDENDAR_TYPES = { GIORGIAN: "giorgian", HIJRI: "hijri" };
+
+export function formatDate(date, formatStr, locale, type) {
+  if (type === CALDENDAR_TYPES.HIJRI) {
+    const hijri = date.toHijri();
+    const year = hijri.year;
+    const month = hijri.month;
+    return `${year} ${HIJRI_MONTHS[month - 1]}`;
+  }
+
   if (locale === "en") {
     return format(date, formatStr, { awareOfUnicodeTokens: true });
   }
@@ -156,7 +165,7 @@ export function safeDateFormat(date, { dateFormat, locale }) {
       formatDate(
         date,
         Array.isArray(dateFormat) ? dateFormat[0] : dateFormat,
-        (locale: locale)
+        locale
       )) ||
     ""
   );
@@ -173,6 +182,29 @@ export { setMonth, setYear };
 // ** Date Getters **
 
 // getDay Returns day of week, getDate returns day of month
+
+function getYear(date, calendar) {
+  return calendar === CALENDAR_TYPES.HIJRI
+    ? date.toHijri().year
+    : fnsGetYear(date);
+}
+
+function getMonth(date, calendar) {
+  return calendar === CALENDAR_TYPES.HIJRI
+    ? date.toHijri().month
+    : fnsGetMonth(date);
+}
+
+function getDate(date, calendar) {
+  return calendar === CALENDAR_TYPES.HIJRI
+    ? date.toHijri().date
+    : fnsGetDate(date);
+}
+
+function hijriToGregorian(hijri) {
+  return new HijriDate(hijri).toGregorian();
+}
+
 export {
   getSeconds,
   getMinutes,
@@ -181,7 +213,8 @@ export {
   getYear,
   getDay,
   getDate,
-  getTime
+  getTime,
+  hijriToGregorian
 };
 
 export function getWeek(date) {
@@ -193,7 +226,7 @@ export function getWeek(date) {
 }
 
 export function getDayOfWeekCode(day, locale) {
-  return formatDate(day, "ddd", (locale: locale));
+  return formatDate(day, "ddd", locale);
 }
 
 // *** Start of ***
@@ -335,8 +368,14 @@ export function getWeekdayShortInLocale(date, locale) {
   return formatDate(date, "EEE", locale);
 }
 
-export function getMonthInLocale(month, locale) {
-  return formatDate(setMonth(newDate(), month), "LLLL", locale);
+export function getMonthInLocale(month, locale, calendar) {
+  let res;
+  if (calendar === CALDENDAR_TYPES.HIJRI) {
+    res = HIJRI_MONTHS[month];
+  } else {
+    res = formatDate(setMonth(newDate(), month), "LLLL", locale);
+  }
+  return res;
 }
 
 export function getMonthShortInLocale(month, locale) {
@@ -555,3 +594,20 @@ export function timesToInjectAfter(
 export function addZero(i) {
   return i < 10 ? `0${i}` : `${i}`;
 }
+
+export const HIJRI_MONTHS = [
+  "Muharram",
+  "Safar",
+  "Rabi I",
+  "Rabi II",
+  "Jumada I",
+  "Jumada II",
+  "Rajab",
+  "Shaaban",
+  "Ramadan",
+  "Shawwal",
+  "Dhu al-Qidah",
+  "Dhu al-Hijjah"
+];
+
+export const CALENDAR_TYPES = { GREGORIAN: "gregorian", HIJRI: "hijri" };

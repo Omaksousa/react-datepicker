@@ -13,11 +13,12 @@ import {
   isBefore,
   isAfter,
   getDayOfWeekCode,
-  formatDate
+  formatDate,
+  CALENDAR_TYPES
 } from "./date_utils";
-
 export default class Day extends React.Component {
   static propTypes = {
+    calendar: PropTypes.oneOf(["gregorian", "hijri"]),
     disabledKeyboardNavigation: PropTypes.bool,
     day: PropTypes.instanceOf(Date).isRequired,
     dayClassName: PropTypes.func,
@@ -194,6 +195,10 @@ export default class Day extends React.Component {
   };
 
   render() {
+    const calendar =
+      this.props.calendar === CALENDAR_TYPES.HIJRI
+        ? CALENDAR_TYPES.HIJRI
+        : CALENDAR_TYPES.GREGORIAN;
     return (
       <div
         className={this.getClassNames(this.props.day)}
@@ -204,10 +209,10 @@ export default class Day extends React.Component {
       >
         {this.props.renderDayContents
           ? this.props.renderDayContents(
-              getDate(this.props.day),
+              getDate(this.props.day, calendar),
               this.props.day
             )
-          : getDate(this.props.day)}
+          : getDate(this.props.day, calendar)}
       </div>
     );
   }
