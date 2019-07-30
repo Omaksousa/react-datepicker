@@ -707,7 +707,9 @@ export default class DatePicker extends React.Component {
       [outsideClickIgnoreClass]: this.state.open
     });
 
-    const customInput = this.props.customInput || <input type="text" />;
+    const customInput = this.props.customInput || (
+      <input type="text" ref={ref => (this.props.ref = ref)} />
+    );
     const customInputRef = this.props.customInputRef || "ref";
     const inputValue =
       typeof this.props.value === "string"

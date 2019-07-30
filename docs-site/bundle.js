@@ -43893,7 +43893,12 @@
 
             var customInput =
               _this.props.customInput ||
-              _react2.default.createElement("input", { type: "text" });
+              _react2.default.createElement("input", {
+                type: "text",
+                ref: function ref(_ref) {
+                  return (_this.props.ref = _ref);
+                }
+              });
             var customInputRef = _this.props.customInputRef || "ref";
             var inputValue =
               typeof _this.props.value === "string"
