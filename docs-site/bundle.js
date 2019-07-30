@@ -43853,6 +43853,10 @@
                 timeFormat: _this.props.timeFormat,
                 timeIntervals: _this.props.timeIntervals,
                 calendar: _this.props.calendar,
+                showHijriFooter: _this.props.showHijriFooter,
+                onCalendarTypeChange: _this.props.onCalendarTypeChange,
+                hijriButtonLabel: _this.props.hijriButtonLabel,
+                gregorianButtonLabel: _this.props.gregorianButtonLabel,
                 minTime: _this.props.minTime,
                 maxTime: _this.props.maxTime,
                 excludeTimes: _this.props.excludeTimes,
@@ -44803,6 +44807,40 @@
             );
           };
 
+          _this.renderFooter = function() {
+            if (!_this.props.showHijriFooter) {
+              return;
+            }
+            var isHijri =
+              _this.props.calendar === _date_utils.CALENDAR_TYPES.HIJRI;
+            var nextType = isHijri
+              ? _date_utils.CALENDAR_TYPES.GREGORIAN
+              : _date_utils.CALENDAR_TYPES.HIJRI;
+            return _react2.default.createElement(
+              "div",
+              { className: "react-datepicker__footer" },
+              isHijri
+                ? _react2.default.createElement(
+                    "button",
+                    {
+                      onClick: function onClick() {
+                        return _this.props.onCalendarTypeChange(nextType);
+                      }
+                    },
+                    _this.props.hijriButtonLabel || "Show Gregorian Calendar"
+                  )
+                : _react2.default.createElement(
+                    "button",
+                    {
+                      onClick: function onClick() {
+                        return _this.props.onCalendarTypeChange(nextType);
+                      }
+                    },
+                    _this.props.gregorianButtonLabel || "Show Hijri Calendar"
+                  )
+            );
+          };
+
           _this.renderTodayButton = function() {
             if (!_this.props.todayButton || _this.props.showTimeSelectOnly) {
               return;
@@ -45085,7 +45123,8 @@
             this.renderTodayButton(),
             this.renderTimeSection(),
             this.renderInputTimeSection(),
-            this.props.children
+            this.props.children,
+            this.renderFooter()
           );
         };
 
@@ -64559,12 +64598,15 @@
           };
 
           _this.state = {
-            startDate: new Date()
+            startDate: new Date(),
+            calendar: "hijri"
           };
           return _this;
         }
 
         Default.prototype.render = function render() {
+          var _this2 = this;
+
           return _react2.default.createElement(
             "div",
             { className: "row" },
@@ -64574,7 +64616,7 @@
               _react2.default.createElement(
                 "code",
                 { className: "jsx" },
-                '\n            <DatePicker\n              selected={this.state.startDate}\n              onChange={this.handleChange}\n              calendar="hijri"\n              showMonthDropdown\n              showYearDropdown\n            />\n            '
+                '\n            <DatePicker\n              selected={this.state.startDate}\n              onChange={this.handleChange}\n              calendar={this.state.calendar}\n              showMonthDropdown\n              showYearDropdown\n              showHijriFooter\n              hijriButtonLabel="\u0627\u0644\u062A\u062D\u0648\u064A\u0644 \u0644\u0644\u062A\u0642\u0648\u064A\u0645 \u0627\u0644\u0647\u062C\u0631\u064A"\n              gregorianButtonLabel="\u0627\u0644\u062A\u062D\u0648\u064A\u0644 \u0644\u0644\u062A\u0642\u0648\u064A\u0645 \u0627\u0644\u0645\u064A\u0644\u0627\u062F\u064A"\n              onCalendarTypeChange={(calendar) => this.setState({ calendar })}\n            />\n            '
               )
             ),
             _react2.default.createElement(
@@ -64583,9 +64625,17 @@
               _react2.default.createElement(_reactDatepicker2.default, {
                 selected: this.state.startDate,
                 onChange: this.handleChange,
-                calendar: "hijri",
+                calendar: this.state.calendar,
                 showMonthDropdown: true,
-                showYearDropdown: true
+                showYearDropdown: true,
+                showHijriFooter: true,
+                hijriButtonLabel:
+                  "\u0627\u0644\u062A\u062D\u0648\u064A\u0644 \u0644\u0644\u062A\u0642\u0648\u064A\u0645 \u0627\u0644\u0647\u062C\u0631\u064A",
+                gregorianButtonLabel:
+                  "\u0627\u0644\u062A\u062D\u0648\u064A\u0644 \u0644\u0644\u062A\u0642\u0648\u064A\u0645 \u0627\u0644\u0645\u064A\u0644\u0627\u062F\u064A",
+                onCalendarTypeChange: function onCalendarTypeChange(calendar) {
+                  return _this2.setState({ calendar: calendar });
+                }
               })
             )
           );

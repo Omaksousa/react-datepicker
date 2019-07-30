@@ -247,8 +247,15 @@
   border-bottom-color: #b3b3b3;
 }
 
-.react-datepicker__month-container {
-  float: left;
+.react-datepicker__footer {
+  border-top: 1px dotted #aeaeae;
+  padding: 5px 0;
+  text-align: center;
+}
+.react-datepicker__footer button {
+  border: none;
+  cursor: pointer;
+  outline: none;
 }
 
 .react-datepicker__month {
