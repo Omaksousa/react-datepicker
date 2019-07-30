@@ -170,7 +170,8 @@ export default class DatePicker extends React.Component {
     renderDayContents: PropTypes.func,
     inlineFocusSelectedMonth: PropTypes.bool,
     onDayMouseEnter: PropTypes.func,
-    onMonthMouseLeave: PropTypes.func
+    onMonthMouseLeave: PropTypes.func,
+    ref: PropTypes.object
   };
 
   static get defaultProps() {
