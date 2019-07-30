@@ -5,7 +5,8 @@ export default class Default extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      startDate: new Date()
+      startDate: new Date(),
+      calendar: "hijri"
     };
   }
 
@@ -24,9 +25,13 @@ export default class Default extends React.Component {
             <DatePicker
               selected={this.state.startDate}
               onChange={this.handleChange}
-              calendar="hijri"
+              calendar={this.state.calendar}
               showMonthDropdown
               showYearDropdown
+              showHijriFooter
+              hijriButtonLabel="التحويل للتقويم الهجري"
+              gregorianButtonLabel="التحويل للتقويم الميلادي"
+              onCalendarTypeChange={(calendar) => this.setState({ calendar })}
             />
             `}
           </code>
@@ -35,9 +40,13 @@ export default class Default extends React.Component {
           <DatePicker
             selected={this.state.startDate}
             onChange={this.handleChange}
-            calendar="hijri"
+            calendar={this.state.calendar}
             showMonthDropdown
             showYearDropdown
+            showHijriFooter
+            hijriButtonLabel="التحويل للتقويم الهجري"
+            gregorianButtonLabel="التحويل للتقويم الميلادي"
+            onCalendarTypeChange={calendar => this.setState({ calendar })}
           />
         </div>
       </div>

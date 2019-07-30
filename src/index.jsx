@@ -154,6 +154,10 @@ export default class DatePicker extends React.Component {
     timeFormat: PropTypes.string,
     timeIntervals: PropTypes.number,
     calendar: PropTypes.oneOf(["gregorian", "hijri"]),
+    showHijriFooter: PropTypes.bool,
+    onCalendarTypeChange: PropTypes.func,
+    hijriButtonLabel: PropTypes.string,
+    gregorianButtonLabel: PropTypes.string,
     minTime: PropTypes.instanceOf(Date),
     maxTime: PropTypes.instanceOf(Date),
     excludeTimes: PropTypes.array,
@@ -670,6 +674,10 @@ export default class DatePicker extends React.Component {
         timeFormat={this.props.timeFormat}
         timeIntervals={this.props.timeIntervals}
         calendar={this.props.calendar}
+        showHijriFooter={this.props.showHijriFooter}
+        onCalendarTypeChange={this.props.onCalendarTypeChange}
+        hijriButtonLabel={this.props.hijriButtonLabel}
+        gregorianButtonLabel={this.props.gregorianButtonLabel}
         minTime={this.props.minTime}
         maxTime={this.props.maxTime}
         excludeTimes={this.props.excludeTimes}

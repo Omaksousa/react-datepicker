@@ -32,7 +32,8 @@ import {
   monthDisabledAfter,
   getEffectiveMinDate,
   getEffectiveMaxDate,
-  addZero
+  addZero,
+  CALENDAR_TYPES
 } from "./date_utils";
 
 const DROPDOWN_FOCUS_CLASSNAMES = [
@@ -52,6 +53,10 @@ export default class Calendar extends React.Component {
   static propTypes = {
     adjustDateOnChange: PropTypes.bool,
     calendar: PropTypes.oneOf(["gregorian", "hijri"]),
+    showHijriFooter: PropTypes.bool,
+    onCalendarTypeChange: PropTypes.func,
+    hijriButtonLabel: PropTypes.string,
+    gregorianButtonLabel: PropTypes.string,
     className: PropTypes.string,
     children: PropTypes.node,
     container: PropTypes.func,
@@ -528,6 +533,27 @@ export default class Calendar extends React.Component {
     );
   };
 
+  renderFooter = () => {
+    if (!this.props.showHijriFooter) {
+      return;
+    }
+    const isHijri = this.props.calendar === CALENDAR_TYPES.HIJRI;
+    const nextType = isHijri ? CALENDAR_TYPES.GREGORIAN : CALENDAR_TYPES.HIJRI;
+    return (
+      <div className="react-datepicker__footer">
+        {isHijri ? (
+          <button onClick={() => this.props.onCalendarTypeChange(nextType)}>
+            {this.props.hijriButtonLabel || "Show Gregorian Calendar"}
+          </button>
+        ) : (
+          <button onClick={() => this.props.onCalendarTypeChange(nextType)}>
+            {this.props.gregorianButtonLabel || "Show Hijri Calendar"}
+          </button>
+        )}
+      </div>
+    );
+  };
+
   renderTodayButton = () => {
     if (!this.props.todayButton || this.props.showTimeSelectOnly) {
       return;
@@ -729,6 +755,7 @@ export default class Calendar extends React.Component {
         {this.renderTimeSection()}
         {this.renderInputTimeSection()}
         {this.props.children}
+        {this.renderFooter()}
       </Container>
     );
   }
