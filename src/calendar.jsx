@@ -648,6 +648,7 @@ export default class Calendar extends React.Component {
             this.monthContainer = div;
           }}
           className="react-datepicker__month-container"
+          style={this.props.showTimeSelect ? { float: "left" } : null}
         >
           {!this.props.showMonthYearPicker
             ? this.props.renderCustomHeader

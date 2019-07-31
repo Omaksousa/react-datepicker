@@ -44973,7 +44973,8 @@
                     ref: function ref(div) {
                       _this.monthContainer = div;
                     },
-                    className: "react-datepicker__month-container"
+                    className: "react-datepicker__month-container",
+                    style: _this.props.showTimeSelect ? { float: "left" } : null
                   },
                   !_this.props.showMonthYearPicker
                     ? _this.props.renderCustomHeader
@@ -64633,15 +64634,6 @@
             _react2.default.createElement(
               "div",
               { className: "column" },
-              _react2.default.createElement(
-                "button",
-                {
-                  onBlur: function onBlur() {
-                    return alert("blured");
-                  }
-                },
-                "Click Me"
-              ),
               _react2.default.createElement(_reactDatepicker2.default, {
                 selected: this.state.startDate,
                 onChange: this.handleChange,
@@ -64655,19 +64647,7 @@
                   "\u0627\u0644\u062A\u062D\u0648\u064A\u0644 \u0644\u0644\u062A\u0642\u0648\u064A\u0645 \u0627\u0644\u0645\u064A\u0644\u0627\u062F\u064A",
                 onCalendarTypeChange: function onCalendarTypeChange(calendar) {
                   return _this2.setState({ calendar: calendar });
-                },
-                onBlur: function onBlur() {
-                  return alert("blured");
-                },
-                customInput: _react2.default.createElement(
-                  "button",
-                  {
-                    onBlur: function onBlur() {
-                      return alert("blured");
-                    }
-                  },
-                  "Click Me"
-                )
+                }
               })
             )
           );

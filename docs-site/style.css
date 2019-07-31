@@ -256,6 +256,7 @@
   border: none;
   cursor: pointer;
   outline: none;
+  background-color: transparent;
 }
 
 .react-datepicker__month {
