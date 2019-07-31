@@ -37,6 +37,7 @@ export default class Default extends React.Component {
           </code>
         </pre>
         <div className="column">
+          <button onBlur={() => alert("blured")}>Click Me</button>
           <DatePicker
             selected={this.state.startDate}
             onChange={this.handleChange}
@@ -47,6 +48,10 @@ export default class Default extends React.Component {
             hijriButtonLabel="التحويل للتقويم الهجري"
             gregorianButtonLabel="التحويل للتقويم الميلادي"
             onCalendarTypeChange={calendar => this.setState({ calendar })}
+            onBlur={() => alert("blured")}
+            customInput={
+              <button onBlur={() => alert("blured")}>Click Me</button>
+            }
           />
         </div>
       </div>

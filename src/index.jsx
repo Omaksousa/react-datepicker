@@ -330,13 +330,13 @@ export default class DatePicker extends React.Component {
 
   isCalendarOpen = () =>
     this.props.open === undefined
-      ? this.state.open && !this.props.disabled && !this.props.readOnly
+      ? this.state.open && !this.props.disabled
       : this.props.open;
 
   handleFocus = event => {
     if (!this.state.preventFocus) {
       this.props.onFocus(event);
-      if (!this.props.preventOpenOnFocus && !this.props.readOnly) {
+      if (!this.props.preventOpenOnFocus) {
         this.setOpen(true);
       }
     }
@@ -513,7 +513,7 @@ export default class DatePicker extends React.Component {
   };
 
   onInputClick = () => {
-    if (!this.props.disabled && !this.props.readOnly) {
+    if (!this.props.disabled) {
       this.setOpen(true);
     }
 
