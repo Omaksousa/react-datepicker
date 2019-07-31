@@ -43477,16 +43477,14 @@
 
           _this.isCalendarOpen = function() {
             return _this.props.open === undefined
-              ? _this.state.open &&
-                  !_this.props.disabled &&
-                  !_this.props.readOnly
+              ? _this.state.open && !_this.props.disabled
               : _this.props.open;
           };
 
           _this.handleFocus = function(event) {
             if (!_this.state.preventFocus) {
               _this.props.onFocus(event);
-              if (!_this.props.preventOpenOnFocus && !_this.props.readOnly) {
+              if (!_this.props.preventOpenOnFocus) {
                 _this.setOpen(true);
               }
             }
@@ -43693,7 +43691,7 @@
           };
 
           _this.onInputClick = function() {
-            if (!_this.props.disabled && !_this.props.readOnly) {
+            if (!_this.props.disabled) {
               _this.setOpen(true);
             }
 
@@ -64635,6 +64633,15 @@
             _react2.default.createElement(
               "div",
               { className: "column" },
+              _react2.default.createElement(
+                "button",
+                {
+                  onBlur: function onBlur() {
+                    return alert("blured");
+                  }
+                },
+                "Click Me"
+              ),
               _react2.default.createElement(_reactDatepicker2.default, {
                 selected: this.state.startDate,
                 onChange: this.handleChange,
@@ -64648,7 +64655,19 @@
                   "\u0627\u0644\u062A\u062D\u0648\u064A\u0644 \u0644\u0644\u062A\u0642\u0648\u064A\u0645 \u0627\u0644\u0645\u064A\u0644\u0627\u062F\u064A",
                 onCalendarTypeChange: function onCalendarTypeChange(calendar) {
                   return _this2.setState({ calendar: calendar });
-                }
+                },
+                onBlur: function onBlur() {
+                  return alert("blured");
+                },
+                customInput: _react2.default.createElement(
+                  "button",
+                  {
+                    onBlur: function onBlur() {
+                      return alert("blured");
+                    }
+                  },
+                  "Click Me"
+                )
               })
             )
           );
