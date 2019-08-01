@@ -744,12 +744,12 @@ export default class Calendar extends React.Component {
   render() {
     const Container = this.props.container || CalendarContainer;
     return (
-      <div onClick={e => e.stopPropagation()}>
-        <Container
-          className={classnames("react-datepicker", this.props.className, {
-            "react-datepicker--time-only": this.props.showTimeSelectOnly
-          })}
-        >
+      <Container
+        className={classnames("react-datepicker", this.props.className, {
+          "react-datepicker--time-only": this.props.showTimeSelectOnly
+        })}
+      >
+        <div onClick={e => e.stopPropagation()}>
           {this.renderPreviousButton()}
           {this.renderNextButton()}
           {this.renderMonths()}
@@ -758,8 +758,8 @@ export default class Calendar extends React.Component {
           {this.renderInputTimeSection()}
           {this.props.children}
           {this.renderFooter()}
-        </Container>
-      </div>
+        </div>
+      </Container>
     );
   }
 }

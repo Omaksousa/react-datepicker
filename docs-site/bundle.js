@@ -45119,22 +45119,22 @@
         Calendar.prototype.render = function render() {
           var Container = this.props.container || _calendar_container2.default;
           return _react2.default.createElement(
-            "div",
+            Container,
             {
-              onClick: function onClick(e) {
-                return e.stopPropagation();
-              }
+              className: (0, _classnames2.default)(
+                "react-datepicker",
+                this.props.className,
+                {
+                  "react-datepicker--time-only": this.props.showTimeSelectOnly
+                }
+              )
             },
             _react2.default.createElement(
-              Container,
+              "div",
               {
-                className: (0, _classnames2.default)(
-                  "react-datepicker",
-                  this.props.className,
-                  {
-                    "react-datepicker--time-only": this.props.showTimeSelectOnly
-                  }
-                )
+                onClick: function onClick(e) {
+                  return e.stopPropagation();
+                }
               },
               this.renderPreviousButton(),
               this.renderNextButton(),
