@@ -45119,24 +45119,32 @@
         Calendar.prototype.render = function render() {
           var Container = this.props.container || _calendar_container2.default;
           return _react2.default.createElement(
-            Container,
+            "div",
             {
-              className: (0, _classnames2.default)(
-                "react-datepicker",
-                this.props.className,
-                {
-                  "react-datepicker--time-only": this.props.showTimeSelectOnly
-                }
-              )
+              onClick: function onClick(e) {
+                return e.stopPropagation();
+              }
             },
-            this.renderPreviousButton(),
-            this.renderNextButton(),
-            this.renderMonths(),
-            this.renderTodayButton(),
-            this.renderTimeSection(),
-            this.renderInputTimeSection(),
-            this.props.children,
-            this.renderFooter()
+            _react2.default.createElement(
+              Container,
+              {
+                className: (0, _classnames2.default)(
+                  "react-datepicker",
+                  this.props.className,
+                  {
+                    "react-datepicker--time-only": this.props.showTimeSelectOnly
+                  }
+                )
+              },
+              this.renderPreviousButton(),
+              this.renderNextButton(),
+              this.renderMonths(),
+              this.renderTodayButton(),
+              this.renderTimeSection(),
+              this.renderInputTimeSection(),
+              this.props.children,
+              this.renderFooter()
+            )
           );
         };
 
@@ -64759,7 +64767,12 @@
             ),
             _react2.default.createElement(
               "div",
-              { className: "column" },
+              {
+                className: "column",
+                onClick: function onClick() {
+                  return alert("clicked");
+                }
+              },
               _react2.default.createElement(_reactDatepicker2.default, {
                 selected: this.state.startDate,
                 onChange: this.handleChange,

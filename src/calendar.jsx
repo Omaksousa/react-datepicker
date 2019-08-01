@@ -744,20 +744,22 @@ export default class Calendar extends React.Component {
   render() {
     const Container = this.props.container || CalendarContainer;
     return (
-      <Container
-        className={classnames("react-datepicker", this.props.className, {
-          "react-datepicker--time-only": this.props.showTimeSelectOnly
-        })}
-      >
-        {this.renderPreviousButton()}
-        {this.renderNextButton()}
-        {this.renderMonths()}
-        {this.renderTodayButton()}
-        {this.renderTimeSection()}
-        {this.renderInputTimeSection()}
-        {this.props.children}
-        {this.renderFooter()}
-      </Container>
+      <div onClick={e => e.stopPropagation()}>
+        <Container
+          className={classnames("react-datepicker", this.props.className, {
+            "react-datepicker--time-only": this.props.showTimeSelectOnly
+          })}
+        >
+          {this.renderPreviousButton()}
+          {this.renderNextButton()}
+          {this.renderMonths()}
+          {this.renderTodayButton()}
+          {this.renderTimeSection()}
+          {this.renderInputTimeSection()}
+          {this.props.children}
+          {this.renderFooter()}
+        </Container>
+      </div>
     );
   }
 }

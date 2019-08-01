@@ -34,7 +34,7 @@ export default class Default extends React.Component {
             `}
           </code>
         </pre>
-        <div className="column">
+        <div className="column" onClick={() => alert("clicked")}>
           <DatePicker
             selected={this.state.startDate}
             onChange={this.handleChange}
