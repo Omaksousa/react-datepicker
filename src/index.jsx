@@ -69,7 +69,7 @@ export default class DatePicker extends React.Component {
     calendarContainer: PropTypes.func,
     children: PropTypes.node,
     className: PropTypes.string,
-    customInput: PropTypes.element,
+    customInput: PropTypes.func,
     customInputRef: PropTypes.string,
     // eslint-disable-next-line react/no-unused-prop-types
     dateFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
@@ -708,9 +708,6 @@ export default class DatePicker extends React.Component {
       [outsideClickIgnoreClass]: this.state.open
     });
 
-    const customInput = this.props.customInput || (
-      <input type="text" ref={ref => (this.props.ref = ref)} />
-    );
     const customInputRef = this.props.customInputRef || "ref";
     const inputValue =
       typeof this.props.value === "string"
@@ -719,11 +716,13 @@ export default class DatePicker extends React.Component {
         ? this.state.inputValue
         : safeDateFormat(this.props.selected, this.props);
 
-    return React.cloneElement(customInput, {
-      [customInputRef]: input => {
-        this.input = input;
-      },
-      value: inputValue,
+    const customInput = this.props.customInput ? (
+      this.props.customInput({ value: this.props.selected })
+    ) : (
+      <input type="text" ref={ref => (this.props.ref = ref)} />
+    );
+
+    const customProps = {
       onBlur: this.handleBlur,
       onChange: this.handleChange,
       onClick: this.onInputClick,
@@ -740,6 +739,15 @@ export default class DatePicker extends React.Component {
       readOnly: this.props.readOnly,
       required: this.props.required,
       tabIndex: this.props.tabIndex
+    };
+
+    !this.props.customInput && (customProps.value = inputValue);
+
+    return React.cloneElement(customInput, {
+      [customInputRef]: input => {
+        this.input = input;
+      },
+      ...customProps
     });
   };
 

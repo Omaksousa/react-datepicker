@@ -6,13 +6,13 @@ import DatePicker from "react-datepicker";
 class ExampleCustomInput extends React.Component {
   static propTypes = {
     onClick: PropTypes.func,
-    value: PropTypes.string
+    value: PropTypes.any
   };
 
   render() {
     return (
       <button className="example-custom-input" onClick={this.props.onClick}>
-        {this.props.value}
+        {this.props.value.toString()}
       </button>
     );
   }
@@ -67,7 +67,7 @@ ExampleCustomInput.propTypes = {
         </pre>
         <div className="column">
           <DatePicker
-            customInput={<ExampleCustomInput />}
+            customInput={({ value }) => <ExampleCustomInput value={value} />}
             selected={this.state.startDate}
             onChange={this.handleChange}
           />

@@ -64767,12 +64767,7 @@
             ),
             _react2.default.createElement(
               "div",
-              {
-                className: "column",
-                onClick: function onClick() {
-                  return alert("clicked");
-                }
-              },
+              { className: "column" },
               _react2.default.createElement(_reactDatepicker2.default, {
                 selected: this.state.startDate,
                 onChange: this.handleChange,
