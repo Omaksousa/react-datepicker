@@ -43904,15 +43904,10 @@
             );
 
             var customInputRef = _this.props.customInputRef || "ref";
-            var inputValue =
-              typeof _this.props.value === "string"
-                ? _this.props.value
-                : typeof _this.state.inputValue === "string"
-                ? _this.state.inputValue
-                : (0, _date_utils.safeDateFormat)(
-                    _this.props.selected,
-                    _this.props
-                  );
+            var inputValue = (0, _date_utils.safeDateFormat)(
+              _this.props.selected,
+              _this.props
+            );
 
             var customInput = _this.props.customInput
               ? _this.props.customInput({ value: _this.props.selected })

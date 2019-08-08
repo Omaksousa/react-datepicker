@@ -142,7 +142,6 @@ export default class DatePicker extends React.Component {
     todayButton: PropTypes.node,
     useWeekdaysShort: PropTypes.bool,
     formatWeekDay: PropTypes.func,
-    value: PropTypes.string,
     weekLabel: PropTypes.string,
     withPortal: PropTypes.bool,
     yearDropdownItemNumber: PropTypes.number,
@@ -709,12 +708,7 @@ export default class DatePicker extends React.Component {
     });
 
     const customInputRef = this.props.customInputRef || "ref";
-    const inputValue =
-      typeof this.props.value === "string"
-        ? this.props.value
-        : typeof this.state.inputValue === "string"
-        ? this.state.inputValue
-        : safeDateFormat(this.props.selected, this.props);
+    const inputValue = safeDateFormat(this.props.selected, this.props);
 
     const customInput = this.props.customInput ? (
       this.props.customInput({ value: this.props.selected })
