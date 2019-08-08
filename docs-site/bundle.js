@@ -43910,7 +43910,7 @@
             );
 
             var customInput = _this.props.customInput
-              ? _this.props.customInput({ value: _this.props.selected })
+              ? _this.props.customInput()
               : _react2.default.createElement("input", {
                   type: "text",
                   ref: function ref(_ref) {
@@ -64626,6 +64626,28 @@
             });
           };
 
+          _this.renderValue = function(value) {
+            return _this.state.calendar === "hijri"
+              ? _this.prinHijri(value) + " - " + _this.printGregorian(value)
+              : _this.printGregorian(value) + " - " + _this.prinHijri(value);
+          };
+
+          _this.prinHijri = function(value) {
+            var date = value.toHijri();
+            return date.year + "/" + date.month + "/" + date.date;
+          };
+
+          _this.printGregorian = function(value) {
+            var date = value;
+            return (
+              date.getFullYear() +
+              "/" +
+              (date.getMonth() + 1) +
+              "/" +
+              date.getDate()
+            );
+          };
+
           _this.state = {
             startDate: new Date(),
             calendar: "hijri"
@@ -64664,6 +64686,13 @@
                   "\u0627\u0644\u062A\u062D\u0648\u064A\u0644 \u0644\u0644\u062A\u0642\u0648\u064A\u0645 \u0627\u0644\u0645\u064A\u0644\u0627\u062F\u064A",
                 onCalendarTypeChange: function onCalendarTypeChange(calendar) {
                   return _this2.setState({ calendar: calendar });
+                },
+                customInput: function customInput() {
+                  return _react2.default.createElement("input", {
+                    value:
+                      _this2.state.startDate &&
+                      _this2.renderValue(_this2.state.startDate)
+                  });
                 }
               })
             )
@@ -70240,6 +70269,8 @@
         }
 
         CustomInput.prototype.render = function render() {
+          var _this3 = this;
+
           return _react2.default.createElement(
             "div",
             { className: "row" },
@@ -70256,10 +70287,9 @@
               "div",
               { className: "column" },
               _react2.default.createElement(_reactDatepicker2.default, {
-                customInput: function customInput(_ref) {
-                  var value = _ref.value;
+                customInput: function customInput() {
                   return _react2.default.createElement(ExampleCustomInput, {
-                    value: value
+                    value: _this3.state.startDate
                   });
                 },
                 selected: this.state.startDate,

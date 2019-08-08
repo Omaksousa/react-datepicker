@@ -69,7 +69,7 @@ export default class DatePicker extends React.Component {
     calendarContainer: PropTypes.func,
     children: PropTypes.node,
     className: PropTypes.string,
-    customInput: PropTypes.func,
+    customInput: PropTypes.object,
     customInputRef: PropTypes.string,
     // eslint-disable-next-line react/no-unused-prop-types
     dateFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
@@ -711,7 +711,7 @@ export default class DatePicker extends React.Component {
     const inputValue = safeDateFormat(this.props.selected, this.props);
 
     const customInput = this.props.customInput ? (
-      this.props.customInput({ value: this.props.selected })
+      this.props.customInput
     ) : (
       <input type="text" ref={ref => (this.props.ref = ref)} />
     );
