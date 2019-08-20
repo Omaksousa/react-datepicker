@@ -44752,7 +44752,8 @@
                 date,
                 _this.props.dateFormat,
                 _this.props.locale,
-                _this.props.calendar
+                _this.props.calendar,
+                "header"
               )
             );
           };
@@ -46111,8 +46112,12 @@
             return year + " " + HIJRI_MONTHS[month - 1];
           }
 
-          if (comp === "header" && !type) {
-            return "";
+          if (comp === "header" && type) {
+            return (
+              (0, _format2.default)(date, "yyyy") +
+              " " +
+              AR_MONTH[date.getMonth()]
+            );
           }
 
           if (locale === "en") {
@@ -46733,6 +46738,21 @@
           November: "نوفمبر",
           December: "ديسمبر"
         };
+
+        var AR_MONTH = [
+          "يناير",
+          "فبرابر",
+          "مارس",
+          "أبريل",
+          "مايو",
+          "يونيو",
+          "يوليو",
+          "أغسطس",
+          "سبتمبر",
+          "أوكتوبر",
+          "نوفمبر",
+          "ديسمبر"
+        ];
 
         var WEEK_DAY_TO_AR = (exports.WEEK_DAY_TO_AR = {
           Sa: "السبت",

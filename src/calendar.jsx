@@ -472,7 +472,8 @@ export default class Calendar extends React.Component {
           date,
           this.props.dateFormat,
           this.props.locale,
-          this.props.calendar
+          this.props.calendar,
+          "header"
         )}
       </div>
     );
