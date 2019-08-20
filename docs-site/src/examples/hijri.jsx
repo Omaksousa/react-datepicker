@@ -16,6 +16,21 @@ export default class Default extends React.Component {
     });
   };
 
+  renderValue = value =>
+    this.state.calendar === "hijri"
+      ? `${this.prinHijri(value)} - ${this.printGregorian(value)}`
+      : `${this.printGregorian(value)} - ${this.prinHijri(value)}`;
+
+  prinHijri = value => {
+    const date = value.toHijri();
+    return `${date.year}/${date.month}/${date.date}`;
+  };
+
+  printGregorian = value => {
+    const date = value;
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+  };
+
   render() {
     return (
       <div className="row">
@@ -47,6 +62,13 @@ export default class Default extends React.Component {
             hijriButtonLabel="التحويل للتقويم الهجري"
             gregorianButtonLabel="التحويل للتقويم الميلادي"
             onCalendarTypeChange={calendar => this.setState({ calendar })}
+            customInput={
+              <input
+                value={
+                  this.state.startDate && this.renderValue(this.state.startDate)
+                }
+              />
+            }
           />
         </div>
       </div>

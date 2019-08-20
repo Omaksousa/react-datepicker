@@ -69,7 +69,7 @@ export default class DatePicker extends React.Component {
     calendarContainer: PropTypes.func,
     children: PropTypes.node,
     className: PropTypes.string,
-    customInput: PropTypes.func,
+    customInput: PropTypes.object,
     customInputRef: PropTypes.string,
     // eslint-disable-next-line react/no-unused-prop-types
     dateFormat: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
@@ -142,7 +142,6 @@ export default class DatePicker extends React.Component {
     todayButton: PropTypes.node,
     useWeekdaysShort: PropTypes.bool,
     formatWeekDay: PropTypes.func,
-    value: PropTypes.string,
     weekLabel: PropTypes.string,
     withPortal: PropTypes.bool,
     yearDropdownItemNumber: PropTypes.number,
@@ -709,15 +708,10 @@ export default class DatePicker extends React.Component {
     });
 
     const customInputRef = this.props.customInputRef || "ref";
-    const inputValue =
-      typeof this.props.value === "string"
-        ? this.props.value
-        : typeof this.state.inputValue === "string"
-        ? this.state.inputValue
-        : safeDateFormat(this.props.selected, this.props);
+    const inputValue = safeDateFormat(this.props.selected, this.props);
 
     const customInput = this.props.customInput ? (
-      this.props.customInput({ value: this.props.selected })
+      this.props.customInput
     ) : (
       <input type="text" ref={ref => (this.props.ref = ref)} />
     );

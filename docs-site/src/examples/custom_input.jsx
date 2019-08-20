@@ -67,7 +67,7 @@ ExampleCustomInput.propTypes = {
         </pre>
         <div className="column">
           <DatePicker
-            customInput={({ value }) => <ExampleCustomInput value={value} />}
+            customInput={<ExampleCustomInput value={this.state.startDate} />}
             selected={this.state.startDate}
             onChange={this.handleChange}
           />
