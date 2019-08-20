@@ -192,7 +192,7 @@ function getYear(date, calendar) {
 function getMonth(date, calendar) {
   return calendar === CALENDAR_TYPES.HIJRI
     ? date.toHijri().month
-    : fnsGetMonth(date);
+    : MONTH_TO_AR[fnsGetMonth(date)];
 }
 
 function getDate(date, calendar) {
@@ -595,7 +595,37 @@ export function addZero(i) {
   return i < 10 ? `0${i}` : `${i}`;
 }
 
+const MONTH_TO_AR = {
+  January: "يناير",
+  February: "فبرابر",
+  March: "مارس",
+  April: "أبريل",
+  May: "مايو",
+  June: "يونيو",
+  July: "يوليو",
+  August: "أغسطس",
+  September: "سبتمبر",
+  October: "أوكتوبر",
+  November: "نوفمبر",
+  December: "ديسمبر"
+};
+
 export const HIJRI_MONTHS = [
+  "محرم",
+  "صفر",
+  "ربيع الأول",
+  "ربيع الثاني",
+  "جمادى الأول",
+  "جمادى الثاني",
+  "رجب",
+  "شعبان",
+  "رمضان",
+  "شوال",
+  "ذي القعدة",
+  "ذي الحجة"
+];
+
+export const HIJRI_MONTHS_En = [
   "Muharram",
   "Safar",
   "Rabi I",

@@ -45734,7 +45734,7 @@
         "use strict";
 
         exports.__esModule = true;
-        exports.CALENDAR_TYPES = exports.HIJRI_MONTHS = exports.isAfter = exports.isBefore = exports.subYears = exports.subMonths = exports.subWeeks = exports.subDays = exports.subHours = exports.subMinutes = exports.addYears = exports.addMonths = exports.addWeeks = exports.addDays = exports.addMinutes = exports.hijriToGregorian = exports.getTime = exports.getDate = exports.getDay = exports.getYear = exports.getMonth = exports.getHours = exports.getMinutes = exports.getSeconds = exports.setYear = exports.setMonth = exports.isDate = undefined;
+        exports.CALENDAR_TYPES = exports.HIJRI_MONTHS_En = exports.HIJRI_MONTHS = exports.isAfter = exports.isBefore = exports.subYears = exports.subMonths = exports.subWeeks = exports.subDays = exports.subHours = exports.subMinutes = exports.addYears = exports.addMonths = exports.addWeeks = exports.addDays = exports.addMinutes = exports.hijriToGregorian = exports.getTime = exports.getDate = exports.getDay = exports.getYear = exports.getMonth = exports.getHours = exports.getMinutes = exports.getSeconds = exports.setYear = exports.setMonth = exports.isDate = undefined;
 
         var _typeof =
           typeof Symbol === "function" && typeof Symbol.iterator === "symbol"
@@ -46190,7 +46190,7 @@
         function getMonth(date, calendar) {
           return calendar === CALENDAR_TYPES.HIJRI
             ? date.toHijri().month
-            : (0, _getMonth2.default)(date);
+            : MONTH_TO_AR[(0, _getMonth2.default)(date)];
         }
 
         function getDate(date, calendar) {
@@ -46715,7 +46715,37 @@
           return i < 10 ? "0" + i : "" + i;
         }
 
+        var MONTH_TO_AR = {
+          January: "يناير",
+          February: "فبرابر",
+          March: "مارس",
+          April: "أبريل",
+          May: "مايو",
+          June: "يونيو",
+          July: "يوليو",
+          August: "أغسطس",
+          September: "سبتمبر",
+          October: "أوكتوبر",
+          November: "نوفمبر",
+          December: "ديسمبر"
+        };
+
         var HIJRI_MONTHS = (exports.HIJRI_MONTHS = [
+          "محرم",
+          "صفر",
+          "ربيع الأول",
+          "ربيع الثاني",
+          "جمادى الأول",
+          "جمادى الثاني",
+          "رجب",
+          "شعبان",
+          "رمضان",
+          "شوال",
+          "ذي القعدة",
+          "ذي الحجة"
+        ]);
+
+        var HIJRI_MONTHS_En = (exports.HIJRI_MONTHS_En = [
           "Muharram",
           "Safar",
           "Rabi I",
