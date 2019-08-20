@@ -46112,7 +46112,7 @@
             return year + " " + HIJRI_MONTHS[month - 1];
           }
 
-          if (comp === "header" && type) {
+          if (comp === "header") {
             return (
               (0, _format2.default)(date, "yyyy") +
               " " +

@@ -137,7 +137,7 @@ export function formatDate(date, formatStr, locale, type, comp) {
     return `${year} ${HIJRI_MONTHS[month - 1]}`;
   }
 
-  if (comp === "header" && type) {
+  if (comp === "header") {
     return `${format(date, "yyyy")} ${AR_MONTH[date.getMonth()]}`;
   }
 
