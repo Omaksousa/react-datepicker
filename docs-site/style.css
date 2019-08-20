@@ -411,7 +411,7 @@
   width: 1.7rem;
   line-height: 1.7rem;
   text-align: center;
-  margin: 0.166rem;
+  margin: 0.366rem;
 }
 .react-datepicker__week-number.react-datepicker__week-number--clickable {
   cursor: pointer;
@@ -434,7 +434,7 @@
   width: 1.7rem;
   line-height: 1.7rem;
   text-align: center;
-  margin: 0.166rem;
+  margin: 0.366rem;
 }
 
 .react-datepicker__month--selected,

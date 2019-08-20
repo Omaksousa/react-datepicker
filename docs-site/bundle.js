@@ -43910,7 +43910,7 @@
             );
 
             var customInput = _this.props.customInput
-              ? _this.props.customInput()
+              ? _this.props.customInput
               : _react2.default.createElement("input", {
                   type: "text",
                   ref: function ref(_ref) {
@@ -44588,7 +44588,9 @@
             }
             return _this.props.useWeekdaysShort
               ? (0, _date_utils.getWeekdayShortInLocale)(day, locale)
-              : (0, _date_utils.getWeekdayMinInLocale)(day, locale);
+              : _date_utils.WEEK_DAY_TO_AR[
+                  (0, _date_utils.getWeekdayMinInLocale)(day, locale)
+                ];
           };
 
           _this.decreaseYear = function() {
@@ -45729,7 +45731,7 @@
         "use strict";
 
         exports.__esModule = true;
-        exports.CALENDAR_TYPES = exports.HIJRI_MONTHS_En = exports.HIJRI_MONTHS = exports.isAfter = exports.isBefore = exports.subYears = exports.subMonths = exports.subWeeks = exports.subDays = exports.subHours = exports.subMinutes = exports.addYears = exports.addMonths = exports.addWeeks = exports.addDays = exports.addMinutes = exports.hijriToGregorian = exports.getTime = exports.getDate = exports.getDay = exports.getYear = exports.getMonth = exports.getHours = exports.getMinutes = exports.getSeconds = exports.setYear = exports.setMonth = exports.isDate = undefined;
+        exports.CALENDAR_TYPES = exports.HIJRI_MONTHS_En = exports.HIJRI_MONTHS = exports.WEEK_DAY_TO_AR = exports.isAfter = exports.isBefore = exports.subYears = exports.subMonths = exports.subWeeks = exports.subDays = exports.subHours = exports.subMinutes = exports.addYears = exports.addMonths = exports.addWeeks = exports.addDays = exports.addMinutes = exports.hijriToGregorian = exports.getTime = exports.getDate = exports.getDay = exports.getYear = exports.getMonth = exports.getHours = exports.getMinutes = exports.getSeconds = exports.setYear = exports.setMonth = exports.isDate = undefined;
 
         var _typeof =
           typeof Symbol === "function" && typeof Symbol.iterator === "symbol"
@@ -46101,12 +46103,16 @@
 
         var CALDENDAR_TYPES = { GIORGIAN: "giorgian", HIJRI: "hijri" };
 
-        function formatDate(date, formatStr, locale, type) {
+        function formatDate(date, formatStr, locale, type, comp) {
           if (type === CALDENDAR_TYPES.HIJRI) {
             var hijri = date.toHijri();
             var year = hijri.year;
             var month = hijri.month;
             return year + " " + HIJRI_MONTHS[month - 1];
+          }
+
+          if (comp === "header" && !type) {
+            return "";
           }
 
           if (locale === "en") {
@@ -46185,7 +46191,7 @@
         function getMonth(date, calendar) {
           return calendar === CALENDAR_TYPES.HIJRI
             ? date.toHijri().month
-            : MONTH_TO_AR[(0, _getMonth2.default)(date)];
+            : (0, _getMonth2.default)(date);
         }
 
         function getDate(date, calendar) {
@@ -46382,11 +46388,14 @@
           if (calendar === CALDENDAR_TYPES.HIJRI) {
             res = HIJRI_MONTHS[month];
           } else {
-            res = formatDate(
-              (0, _setMonth2.default)(newDate(), month),
-              "LLLL",
-              locale
-            );
+            res =
+              MONTH_TO_AR[
+                formatDate(
+                  (0, _setMonth2.default)(newDate(), month),
+                  "LLLL",
+                  locale
+                )
+              ];
           }
           return res;
         }
@@ -46724,6 +46733,16 @@
           November: "نوفمبر",
           December: "ديسمبر"
         };
+
+        var WEEK_DAY_TO_AR = (exports.WEEK_DAY_TO_AR = {
+          Sa: "السبت",
+          Su: "الأحد",
+          Mo: "الإثنين",
+          Tu: "الثلاثاء",
+          We: "الأربعاء",
+          Th: "الخميس",
+          Fr: "الجمعة"
+        });
 
         var HIJRI_MONTHS = (exports.HIJRI_MONTHS = [
           "محرم",
@@ -64717,13 +64736,11 @@
                 onCalendarTypeChange: function onCalendarTypeChange(calendar) {
                   return _this2.setState({ calendar: calendar });
                 },
-                customInput: function customInput() {
-                  return _react2.default.createElement("input", {
-                    value:
-                      _this2.state.startDate &&
-                      _this2.renderValue(_this2.state.startDate)
-                  });
-                }
+                customInput: _react2.default.createElement("input", {
+                  value:
+                    this.state.startDate &&
+                    this.renderValue(this.state.startDate)
+                })
               })
             )
           );
@@ -70299,8 +70316,6 @@
         }
 
         CustomInput.prototype.render = function render() {
-          var _this3 = this;
-
           return _react2.default.createElement(
             "div",
             { className: "row" },
@@ -70317,11 +70332,9 @@
               "div",
               { className: "column" },
               _react2.default.createElement(_reactDatepicker2.default, {
-                customInput: function customInput() {
-                  return _react2.default.createElement(ExampleCustomInput, {
-                    value: _this3.state.startDate
-                  });
-                },
+                customInput: _react2.default.createElement(ExampleCustomInput, {
+                  value: this.state.startDate
+                }),
                 selected: this.state.startDate,
                 onChange: this.handleChange
               })
