@@ -33,7 +33,8 @@ import {
   getEffectiveMinDate,
   getEffectiveMaxDate,
   addZero,
-  CALENDAR_TYPES
+  CALENDAR_TYPES,
+  WEEK_DAY_TO_AR
 } from "./date_utils";
 
 const DROPDOWN_FOCUS_CLASSNAMES = [
@@ -332,7 +333,7 @@ export default class Calendar extends React.Component {
     }
     return this.props.useWeekdaysShort
       ? getWeekdayShortInLocale(day, locale)
-      : getWeekdayMinInLocale(day, locale);
+      : WEEK_DAY_TO_AR[getWeekdayMinInLocale(day, locale)];
   };
 
   decreaseYear = () => {

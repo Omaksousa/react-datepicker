@@ -129,12 +129,16 @@ export function isValid(date) {
 
 const CALDENDAR_TYPES = { GIORGIAN: "giorgian", HIJRI: "hijri" };
 
-export function formatDate(date, formatStr, locale, type) {
+export function formatDate(date, formatStr, locale, type, comp) {
   if (type === CALDENDAR_TYPES.HIJRI) {
     const hijri = date.toHijri();
     const year = hijri.year;
     const month = hijri.month;
     return `${year} ${HIJRI_MONTHS[month - 1]}`;
+  }
+
+  if (comp === "header" && !type) {
+    return "";
   }
 
   if (locale === "en") {
@@ -192,7 +196,7 @@ function getYear(date, calendar) {
 function getMonth(date, calendar) {
   return calendar === CALENDAR_TYPES.HIJRI
     ? date.toHijri().month
-    : MONTH_TO_AR[fnsGetMonth(date)];
+    : fnsGetMonth(date);
 }
 
 function getDate(date, calendar) {
@@ -373,7 +377,7 @@ export function getMonthInLocale(month, locale, calendar) {
   if (calendar === CALDENDAR_TYPES.HIJRI) {
     res = HIJRI_MONTHS[month];
   } else {
-    res = formatDate(setMonth(newDate(), month), "LLLL", locale);
+    res = MONTH_TO_AR[formatDate(setMonth(newDate(), month), "LLLL", locale)];
   }
   return res;
 }
@@ -608,6 +612,16 @@ const MONTH_TO_AR = {
   October: "أوكتوبر",
   November: "نوفمبر",
   December: "ديسمبر"
+};
+
+export const WEEK_DAY_TO_AR = {
+  Sa: "السبت",
+  Su: "الأحد",
+  Mo: "الإثنين",
+  Tu: "الثلاثاء",
+  We: "الأربعاء",
+  Th: "الخميس",
+  Fr: "الجمعة"
 };
 
 export const HIJRI_MONTHS = [
