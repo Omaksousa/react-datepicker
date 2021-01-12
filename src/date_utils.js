@@ -55,6 +55,7 @@ import toDate from "date-fns/toDate";
 import parse from "date-fns/parse";
 import parseISO from "date-fns/parseISO";
 import longFormatters from "date-fns/esm/_lib/format/longFormatters";
+import 'hijri-date';
 
 export const DEFAULT_YEAR_ITEM_NUMBER = 12;
 

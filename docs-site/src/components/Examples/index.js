@@ -77,6 +77,7 @@ import CustomTimeInput from "../../examples/customTimeInput";
 import CloseOnScroll from "../../examples/closeOnScroll";
 import CloseOnScrollCallback from "../../examples/closeOnScrollCallback";
 import SelectsRange from "../../examples/selectsRange";
+import HijryDatePicker from "../../examples/hijri";
 
 import "./style.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -390,6 +391,10 @@ export default class exampleComponents extends React.Component {
     {
       title: "Year item number",
       component: YearItemNumber
+    },
+    {
+      title: "Hijri (Arabic) DatePicker",
+      component: HijryDatePicker
     }
   ];
 
