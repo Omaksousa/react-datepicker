@@ -8,6 +8,7 @@ import {
   newDate,
   isSameDay,
   isDayDisabled,
+  isDayExcluded,
   isDayInRange,
   isEqual,
   isBefore,
@@ -19,12 +20,15 @@ import {
 export default class Day extends React.Component {
   static propTypes = {
     calendar: PropTypes.oneOf(["gregorian", "hijri"]),
+    ariaLabelPrefixWhenEnabled: PropTypes.string,
+    ariaLabelPrefixWhenDisabled: PropTypes.string,
     disabledKeyboardNavigation: PropTypes.bool,
     day: PropTypes.instanceOf(Date).isRequired,
     dayClassName: PropTypes.func,
     endDate: PropTypes.instanceOf(Date),
     highlightDates: PropTypes.instanceOf(Map),
     inline: PropTypes.bool,
+    shouldFocusDayInline: PropTypes.bool,
     month: PropTypes.number,
     onClick: PropTypes.func,
     onMouseEnter: PropTypes.func,
@@ -33,9 +37,27 @@ export default class Day extends React.Component {
     selectingDate: PropTypes.instanceOf(Date),
     selectsEnd: PropTypes.bool,
     selectsStart: PropTypes.bool,
+    selectsRange: PropTypes.bool,
     startDate: PropTypes.instanceOf(Date),
-    renderDayContents: PropTypes.func
+    renderDayContents: PropTypes.func,
+    handleOnKeyDown: PropTypes.func,
+    containerRef: PropTypes.oneOfType([
+      PropTypes.func,
+      PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+    ]),
+    monthShowsDuplicateDaysEnd: PropTypes.bool,
+    monthShowsDuplicateDaysStart: PropTypes.bool
   };
+
+  componentDidMount() {
+    this.handleFocusDay();
+  }
+
+  componentDidUpdate(prevProps) {
+    this.handleFocusDay(prevProps);
+  }
+
+  dayEl = React.createRef();
 
   handleClick = event => {
     if (!this.isDisabled() && this.props.onClick) {
@@ -49,15 +71,26 @@ export default class Day extends React.Component {
     }
   };
 
+  handleOnKeyDown = event => {
+    const eventKey = event.key;
+    if (eventKey === " ") {
+      event.preventDefault();
+      event.key = "Enter";
+    }
+
+    this.props.handleOnKeyDown(event);
+  };
+
   isSameDay = other => isSameDay(this.props.day, other);
 
   isKeyboardSelected = () =>
     !this.props.disabledKeyboardNavigation &&
-    !this.props.inline &&
     !this.isSameDay(this.props.selected) &&
     this.isSameDay(this.props.preSelection);
 
   isDisabled = () => isDayDisabled(this.props.day, this.props);
+
+  isExcluded = () => isDayExcluded(this.props.day, this.props);
 
   getHighLightedClass = defaultClassName => {
     const { day, highlightDates } = this.props;
@@ -84,12 +117,17 @@ export default class Day extends React.Component {
       day,
       selectsStart,
       selectsEnd,
+      selectsRange,
       selectingDate,
       startDate,
       endDate
     } = this.props;
 
-    if (!(selectsStart || selectsEnd) || !selectingDate || this.isDisabled()) {
+    if (
+      !(selectsStart || selectsEnd || selectsRange) ||
+      !selectingDate ||
+      this.isDisabled()
+    ) {
       return false;
     }
 
@@ -104,6 +142,15 @@ export default class Day extends React.Component {
     if (
       selectsEnd &&
       startDate &&
+      (isAfter(selectingDate, startDate) || isEqual(selectingDate, startDate))
+    ) {
+      return isDayInRange(day, startDate, selectingDate);
+    }
+
+    if (
+      selectsRange &&
+      startDate &&
+      !endDate &&
       (isAfter(selectingDate, startDate) || isEqual(selectingDate, startDate))
     ) {
       return isDayInRange(day, startDate, selectingDate);
@@ -178,6 +225,7 @@ export default class Day extends React.Component {
       "react-datepicker__day--" + getDayOfWeekCode(this.props.day),
       {
         "react-datepicker__day--disabled": this.isDisabled(),
+        "react-datepicker__day--excluded": this.isExcluded(),
         "react-datepicker__day--selected": this.isSameDay(this.props.selected),
         "react-datepicker__day--keyboard-selected": this.isKeyboardSelected(),
         "react-datepicker__day--range-start": this.isRangeStart(),
@@ -194,26 +242,104 @@ export default class Day extends React.Component {
     );
   };
 
-  render() {
+  getAriaLabel = () => {
+    const {
+      day,
+      ariaLabelPrefixWhenEnabled = "Choose",
+      ariaLabelPrefixWhenDisabled = "Not available"
+    } = this.props;
+
+    const prefix =
+      this.isDisabled() || this.isExcluded()
+        ? ariaLabelPrefixWhenDisabled
+        : ariaLabelPrefixWhenEnabled;
+
+    return `${prefix} ${formatDate(day, "PPPP")}`;
+  };
+
+  getTabIndex = (selected, preSelection) => {
+    const selectedDay = selected || this.props.selected;
+    const preSelectionDay = preSelection || this.props.preSelection;
+
+    const tabIndex =
+      this.isKeyboardSelected() ||
+      (this.isSameDay(selectedDay) && isSameDay(preSelectionDay, selectedDay))
+        ? 0
+        : -1;
+
+    return tabIndex;
+  };
+
+  // various cases when we need to apply focus to the preselected day
+  // focus the day on mount/update so that keyboard navigation works while cycling through months with up or down keys (not for prev and next month buttons)
+  // prevent focus for these activeElement cases so we don't pull focus from the input as the calendar opens
+  handleFocusDay = (prevProps = {}) => {
+    let shouldFocusDay = false;
+    // only do this while the input isn't focused
+    // otherwise, typing/backspacing the date manually may steal focus away from the input
+    if (
+      this.getTabIndex() === 0 &&
+      !prevProps.isInputFocused &&
+      this.isSameDay(this.props.preSelection)
+    ) {
+      // there is currently no activeElement and not inline
+      if ((!document.activeElement || document.activeElement === document.body)) {
+        shouldFocusDay = true;
+      }
+      // inline version:
+      // do not focus on initial render to prevent autoFocus issue
+      // focus after month has changed via keyboard
+      if (this.props.inline && !this.props.shouldFocusDayInline) {
+        shouldFocusDay = false;
+      }
+      // the activeElement is in the container, and it is another instance of Day
+      if (
+        this.props.containerRef &&
+        this.props.containerRef.current &&
+        this.props.containerRef.current.contains(document.activeElement) &&
+        document.activeElement.classList.contains("react-datepicker__day")
+      ) {
+        shouldFocusDay = true;
+      }
+    }
+
+    shouldFocusDay && this.dayEl.current.focus({ preventScroll: true });
+  };
+
+  renderDayContents = () => {
+    if(this.isOutsideMonth()) {
+      if(this.props.monthShowsDuplicateDaysEnd && getDate(this.props.day) < 10) return null;
+      if(this.props.monthShowsDuplicateDaysStart && getDate(this.props.day) > 20) return null;
+    }
+
+    return this.props.renderDayContents
+    ? this.props.renderDayContents(getDate(this.props.day), this.props.day)
+    : getDate(this.props.day);
+  }
+
+  render = () => {
     const calendar =
-      this.props.calendar === CALENDAR_TYPES.HIJRI
-        ? CALENDAR_TYPES.HIJRI
-        : CALENDAR_TYPES.GREGORIAN;
+    this.props.calendar === CALENDAR_TYPES.HIJRI
+      ? CALENDAR_TYPES.HIJRI
+      : CALENDAR_TYPES.GREGORIAN;
     return (
-      <div
-        className={this.getClassNames(this.props.day)}
-        onClick={this.handleClick}
-        onMouseEnter={this.handleMouseEnter}
-        aria-label={`day-${getDate(this.props.day)}`}
-        role="option"
-      >
-        {this.props.renderDayContents
+    <div
+      ref={this.dayEl}
+      className={this.getClassNames(this.props.day)}
+      onKeyDown={this.handleOnKeyDown}
+      onClick={this.handleClick}
+      onMouseEnter={this.handleMouseEnter}
+      tabIndex={this.getTabIndex()}
+      aria-label={this.getAriaLabel()}
+      role="button"
+      aria-disabled={this.isDisabled()}
+    >
+           {this.props.renderDayContents
           ? this.props.renderDayContents(
               getDate(this.props.day, calendar),
               this.props.day
             )
           : getDate(this.props.day, calendar)}
-      </div>
-    );
-  }
+    </div>
+  )};
 }

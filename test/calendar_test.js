@@ -13,6 +13,7 @@ import sinon from "sinon";
 import * as utils from "../src/date_utils";
 import eo from "date-fns/locale/eo";
 import fi from "date-fns/locale/fi";
+import { isSunday } from "date-fns";
 
 // TODO Possibly rename
 const DATE_FORMAT = "MM/dd/yyyy";
@@ -166,6 +167,23 @@ describe("Calendar", function() {
       .forEach(dayName => expect(dayName.text()).to.have.length(1));
   });
 
+  it("should contain the correct class when using the weekDayClassName prop", () => {
+    const func = date => (isSunday(date) ? "sunday" : undefined);
+
+    const calendar = mount(
+      <Calendar
+        dateFormat={dateFormat}
+        dropdownMode="scroll"
+        onClickOutside={() => {}}
+        onSelect={() => {}}
+        weekDayClassName={func}
+      />
+    );
+
+    const sunday = calendar.find(".react-datepicker__day-name.sunday");
+    expect(sunday).to.have.length(1);
+  });
+
   it("should render the months correctly adjusted by monthSelectedIn", () => {
     const selected = utils.newDate("2018-11-19");
     const calendar = getCalendar({ inline: true, monthsShown: 2, selected });
@@ -298,6 +316,72 @@ describe("Calendar", function() {
       expect(monthSelect).to.have.length(1);
       expect(prevMonth).to.have.length(1);
       expect(nextMonth).to.have.length(1);
+    });
+
+    it("should render custom header when showing year picker", function() {
+      const calendar = getCalendar({
+        renderCustomHeader,
+        showYearPicker: true
+      });
+
+      expect(calendar.find(".react-datepicker__header--custom")).to.have.length(
+        1
+      );
+
+      expect(
+        calendar.find(".react-datepicker__year--container")
+      ).to.have.length(1);
+    });
+
+    it("should render day names with renderCustomHeader", function() {
+      const calendar = getCalendar({
+        renderCustomHeader
+      });
+
+      expect(calendar.find(".react-datepicker__header--custom")).to.have.length(
+        1
+      );
+
+      expect(calendar.find(".react-datepicker__day-names")).to.have.length(1);
+    });
+
+    it("should not render day names with renderCustomHeader & showMonthYearPicker", function() {
+      const calendar = getCalendar({
+        renderCustomHeader,
+        showMonthYearPicker: true
+      });
+
+      expect(calendar.find(".react-datepicker__header--custom")).to.have.length(
+        1
+      );
+
+      expect(calendar.find(".react-datepicker__day-names")).to.have.length(0);
+    });
+
+    it("should not render day names with renderCustomHeader & showYearPicker", function() {
+      const calendar = getCalendar({
+        renderCustomHeader,
+        showYearPicker: true
+      });
+
+      expect(calendar.find(".react-datepicker__header--custom")).to.have.length(
+        1
+      );
+
+      expect(calendar.find(".react-datepicker__day-names")).to.have.length(0);
+    });
+
+    it("should not render day names with renderCustomHeader & showQuarterYearPicker", function() {
+      const calendar = getCalendar({
+        renderCustomHeader,
+        showQuarterYearPicker: true
+      });
+
+      expect(calendar.find(".react-datepicker__header--custom")).to.have.length(
+        1
+      );
+
+      expect(calendar.find(".react-datepicker__day-names")).to.have.length(0);
     });
 
     it("should go to previous month", function() {
@@ -743,6 +827,26 @@ describe("Calendar", function() {
     expect(utils.formatDate(date, "dd.MM.yyyy")).to.equal(expectedDate);
   });
 
+  it("should trigger onCalendarOpen and onCalendarClose", () => {
+    const onCalendarOpen = sinon.spy();
+    const onCalendarClose = sinon.spy();
+
+    const datePicker = TestUtils.renderIntoDocument(
+      <DatePicker
+        onCalendarOpen={onCalendarOpen}
+        onCalendarClose={onCalendarClose}
+      />
+    );
+
+    TestUtils.Simulate.focus(ReactDOM.findDOMNode(datePicker.input));
+
+    assert(onCalendarOpen.called === true, "onCalendarOpen should be called");
+
+    TestUtils.Simulate.blur(ReactDOM.findDOMNode(datePicker.input));
+
+    assert(onCalendarOpen.called === true, "onCalendarClose should be called");
+  });
+
   describe("onMonthChange", () => {
     let onMonthChangeSpy = sinon.spy();
     let calendar;
@@ -1007,8 +1111,8 @@ describe("Calendar", function() {
   });
 
   describe("renderInputTimeSection", function() {
-    it("should render InputTime component", function() {
-      let calendar = mount(
+    const renderCalendar = props =>
+      mount(
         <Calendar
           dateFormat={dateFormat}
           onSelect={() => {}}
@@ -1017,12 +1121,94 @@ describe("Calendar", function() {
           dropdownMode="select"
           showYearDropdown
           showTimeInput
+          {...props}
         />
       );
-      const timeInputClassname = calendar.find(
-        ".react-datepicker__input-time-container"
-      );
+    const timeInputSelector = ".react-datepicker__input-time-container";
+
+    it("should render InputTime component", function() {
+      const calendar = renderCalendar();
+      const timeInputClassname = calendar.find(timeInputSelector);
       expect(timeInputClassname).to.have.length(1);
+    });
+
+    it("should pass empty string to InputTime when no selected date", () => {
+      const calendar = renderCalendar();
+      const timeInputEl = calendar.find(`${timeInputSelector} input`);
+      expect(timeInputEl.prop("value")).to.equal("");
+    });
+  });
+
+  describe("renderYearPicker", function() {
+    it("should render YearPicker component", function() {
+      let calendar = mount(
+        <Calendar
+          dateFormat={dateFormat}
+          onSelect={() => {}}
+          onClickOutside={() => {}}
+          hideCalendar={() => {}}
+          dropdownMode="select"
+          showYearPicker
+        />
+      );
+      const timeInputClassname = calendar.find(".react-datepicker__year");
+      expect(timeInputClassname).to.have.length(1);
+    });
+
+    it("calls increaseYear when next year button clicked", () => {
+      var calendar = TestUtils.renderIntoDocument(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          onSelect={() => {}}
+          onClickOutside={() => {}}
+          showYearPicker
+        />
+      );
+      calendar.state.date = utils.parseDate("09/28/1993", DATE_FORMAT);
+      var increaseYear = calendar.increaseYear;
+      increaseYear();
+      assert.equal(utils.getYear(calendar.state.date), 2005);
+    });
+
+    it("calls decreaseYear when previous year button clicked", () => {
+      var calendar = TestUtils.renderIntoDocument(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          onSelect={() => {}}
+          onClickOutside={() => {}}
+          showYearPicker
+        />
+      );
+      calendar.state.date = utils.parseDate("09/28/1993", DATE_FORMAT);
+      var decreaseYear = calendar.decreaseYear;
+      decreaseYear();
+      assert.equal(utils.getYear(calendar.state.date), 1981);
+    });
+
+    it("calls increaseYear for custom year item number when next year button clicked", () => {
+      let calendar = TestUtils.renderIntoDocument(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          showYearPicker
+          yearItemNumber={10}
+        />
+      );
+      calendar.state.date = utils.parseDate("09/28/1993", DATE_FORMAT);
+      calendar.increaseYear();
+      assert.equal(utils.getYear(calendar.state.date), 2003);
+    });
+  
+    it("calls decreaseYear for custom year item number when previous year button clicked", () => {
+      let calendar = TestUtils.renderIntoDocument(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          showYearPicker
+          yearItemNumber={10}
+        />
+      );
+      calendar.state.date = utils.parseDate("09/28/1993", DATE_FORMAT);
+      calendar.decreaseYear();
+      assert.equal(utils.getYear(calendar.state.date), 1983);
     });
   });
 
@@ -1041,6 +1227,23 @@ describe("Calendar", function() {
       const next = calendar.find(".react-datepicker__navigation--next");
       expect(previous.text()).to.equal("Previous Year");
       expect(next.text()).to.equal("Next Year");
+    });
+
+    it("should render custom next and previous labels", function() {
+      var calendar = mount(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          onSelect={() => {}}
+          onClickOutside={() => {}}
+          showMonthYearPicker
+          previousYearButtonLabel="Custom Previous Year Label"
+          nextYearButtonLabel="Custom Next Year Label"
+        />
+      );
+      const previous = calendar.find(".react-datepicker__navigation--previous");
+      const next = calendar.find(".react-datepicker__navigation--next");
+      expect(previous.text()).to.equal("Custom Previous Year Label");
+      expect(next.text()).to.equal("Custom Next Year Label");
     });
 
     it("calls decreaseYear when previous month button clicked", () => {
@@ -1071,6 +1274,216 @@ describe("Calendar", function() {
       var increaseYear = calendar.increaseYear;
       increaseYear();
       assert.equal(utils.getYear(calendar.state.date), 1994);
+    });
+  });
+
+  describe("when showQuarterYearPicker is enabled", () => {
+    let calendar = mount(
+      <Calendar
+        dateFormat={DATE_FORMAT}
+        onSelect={() => {}}
+        onClickOutside={() => {}}
+        hideCalendar={() => {}}
+        showQuarterYearPicker
+      />
+    );
+    it("should change the next and previous labels", () => {
+      const previous = calendar.find(".react-datepicker__navigation--previous");
+      const next = calendar.find(".react-datepicker__navigation--next");
+      expect(previous.text()).to.equal("Previous Year");
+      expect(next.text()).to.equal("Next Year");
+    });
+
+    it("should render custom next and previous labels", function() {
+      var calendar = mount(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          onSelect={() => {}}
+          onClickOutside={() => {}}
+          showQuarterYearPicker
+          previousYearButtonLabel="Custom Previous Year Label"
+          nextYearButtonLabel="Custom Next Year Label"
+        />
+      );
+      const previous = calendar.find(".react-datepicker__navigation--previous");
+      const next = calendar.find(".react-datepicker__navigation--next");
+      expect(previous.text()).to.equal("Custom Previous Year Label");
+      expect(next.text()).to.equal("Custom Next Year Label");
+    });
+
+    it("calls decreaseYear when previous month button clicked", () => {
+      var calendar = TestUtils.renderIntoDocument(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          onSelect={() => {}}
+          onClickOutside={() => {}}
+          showQuarterYearPicker
+        />
+      );
+      calendar.state.date = utils.parseDate("09/28/1993", DATE_FORMAT);
+      var decreaseYear = calendar.decreaseYear;
+      decreaseYear();
+      assert.equal(utils.getYear(calendar.state.date), 1992);
+    });
+
+    it("calls increaseYear when next month button clicked", () => {
+      var calendar = TestUtils.renderIntoDocument(
+        <Calendar
+          dateFormat={DATE_FORMAT}
+          onSelect={() => {}}
+          onClickOutside={() => {}}
+          showQuarterYearPicker
+        />
+      );
+      calendar.state.date = utils.parseDate("09/28/1993", DATE_FORMAT);
+      var increaseYear = calendar.increaseYear;
+      increaseYear();
+      assert.equal(utils.getYear(calendar.state.date), 1994);
+    });
+  });
+
+  describe("using click outside", () => {
+    const clickOutsideSpy = sinon.spy();
+    const calendar = mount(
+      <Calendar
+        dateFormat={DATE_FORMAT}
+        onSelect={() => {}}
+        onClickOutside={clickOutsideSpy}
+      />
+    );
+
+    const instance = calendar.instance();
+
+    it("calls onClickOutside prop when handles click outside", () => {
+      instance.handleClickOutside("__event__");
+
+      assert(clickOutsideSpy.calledWith("__event__"));
+    });
+
+    it("setClickOutsideRef function returns container ref", () => {
+      const ref = instance.setClickOutsideRef();
+
+      assert.isNotNull(ref);
+      assert.equal(ref, instance.containerRef.current);
+    });
+  });
+
+  it("should have a next-button with the provided aria-label for year", () => {
+    const ariaLabel = "A label in my native language for next year";
+    const shallowCalendar = mount(
+      <Calendar
+        nextYearAriaLabel={ariaLabel}
+        dateFormat={DATE_FORMAT}
+        onSelect={() => {}}
+        onClickOutside={() => {}}
+        showQuarterYearPicker
+      />
+    );
+    expect(
+      shallowCalendar.html().indexOf(`aria-label="${ariaLabel}"`)
+    ).not.equal(-1);
+  });
+
+  it("should have a previous-button with the provided aria-label for year", () => {
+    const ariaLabel = "A label in my native language for previous year";
+    const shallowCalendar = mount(
+      <Calendar
+        previousYearAriaLabel={ariaLabel}
+        dateFormat={DATE_FORMAT}
+        onSelect={() => {}}
+        onClickOutside={() => {}}
+        showQuarterYearPicker
+      />
+    );
+    expect(
+      shallowCalendar.html().indexOf(`aria-label="${ariaLabel}"`)
+    ).not.equal(-1);
+  });
+
+  it("should have a next-button with the provided aria-label for month", () => {
+    const ariaLabel = "A label in my native language for next month";
+    const shallowCalendar = mount(
+      <Calendar
+        nextMonthAriaLabel={ariaLabel}
+        dateFormat={DATE_FORMAT}
+        onSelect={() => {}}
+        onClickOutside={() => {}}
+      />
+    );
+    expect(
+      shallowCalendar.html().indexOf(`aria-label="${ariaLabel}"`)
+    ).not.equal(-1);
+  });
+
+  it("should have a previous-button with the provided aria-label for month", () => {
+    const ariaLabel = "A label in my native language for previous month";
+    const shallowCalendar = mount(
+      <Calendar
+        previousMonthAriaLabel={ariaLabel}
+        dateFormat={DATE_FORMAT}
+        onSelect={() => {}}
+        onClickOutside={() => {}}
+      />
+    );
+    expect(
+      shallowCalendar.html().indexOf(`aria-label="${ariaLabel}"`)
+    ).not.equal(-1);
+  });
+
+  describe("changing the month also changes the preselection to preserve keyboard navigation abilities", () => {
+    it("updates the preselection when you choose Next Month", () => {
+      let selected = new Date();
+      selected.setDate(1);
+      const currentMonth = selected.getMonth();
+
+      const datePicker = TestUtils.renderIntoDocument(
+        <DatePicker selected={selected} />
+      );
+      const dateInput = datePicker.input;
+      TestUtils.Simulate.focus(ReactDOM.findDOMNode(dateInput));
+      TestUtils.Simulate.click(
+        TestUtils.findRenderedDOMComponentWithClass(
+          datePicker,
+          "react-datepicker__navigation--next"
+        )
+      );
+      expect(datePicker.state.preSelection.getMonth()).to.equal(
+        currentMonth === 11 ? 0 : currentMonth + 1
+      );
+    });
+    it("updates the preselection when you choose Previous Month", () => {
+      let selected = new Date();
+      selected.setDate(1);
+      const currentMonth = selected.getMonth();
+
+      const datePicker = TestUtils.renderIntoDocument(
+        <DatePicker selected={selected} />
+      );
+      const dateInput = datePicker.input;
+      TestUtils.Simulate.focus(ReactDOM.findDOMNode(dateInput));
+      TestUtils.Simulate.click(
+        TestUtils.findRenderedDOMComponentWithClass(
+          datePicker,
+          "react-datepicker__navigation--previous"
+        )
+      );
+      expect(datePicker.state.preSelection.getMonth()).to.equal(
+        currentMonth === 0 ? 11 : currentMonth - 1
+      );
+    });
+  });
+
+  describe("showTimeSelect", () => {
+    it("should not contain the time select classname in header by default", () => {
+      const calendar = getCalendar();
+      const header = calendar.find(".react-datepicker__header--has-time-select");
+      expect(header).to.have.length(0);
+    });
+
+    it("should contain the time select classname in header if enabled", () => {
+      const calendar = getCalendar({ showTimeSelect: true });
+      const header = calendar.find(".react-datepicker__header--has-time-select");
+      expect(header).to.have.length(1);
     });
   });
 });

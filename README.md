@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/Hacker0x01/react-datepicker.svg?branch=master)](https://travis-ci.org/Hacker0x01/react-datepicker)
 [![Dependency Status](https://david-dm.org/Hacker0x01/react-datepicker.svg)](https://david-dm.org/Hacker0x01/react-datepicker)
 [![codecov](https://codecov.io/gh/Hacker0x01/react-datepicker/branch/master/graph/badge.svg)](https://codecov.io/gh/Hacker0x01/react-datepicker)
-[![Downloads](http://img.shields.io/npm/dm/react-datepicker.svg)](https://npmjs.org/package/react-datepicker)
+[![Downloads](https://img.shields.io/npm/dm/react-datepicker.svg)](https://npmjs.org/package/react-datepicker)
 [![Code Quality: Javascript](https://img.shields.io/lgtm/grade/javascript/g/Hacker0x01/react-datepicker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Hacker0x01/react-datepicker/context:javascript)
 [![Total Alerts](https://img.shields.io/lgtm/alerts/g/Hacker0x01/react-datepicker.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/Hacker0x01/react-datepicker/alerts)
 
@@ -14,16 +14,22 @@ A simple and reusable Datepicker component for React ([Demo](https://reactdatepi
 
 ## Installation
 
-The package can be installed via NPM:
+The package can be installed via [npm](https://github.com/npm/cli):
 
 ```
 npm install react-datepicker --save
 ```
 
+Or via [yarn](https://github.com/yarnpkg/yarn):
+
+```
+yarn add react-datepicker
+```
+
 You’ll need to install React and PropTypes separately since those dependencies aren’t included in the package. If you need to use a locale other than the default en-US, you'll also need to import that into your project from date-fns (see Localization section below). Below is a simple example of how to use the Datepicker in a React view. You will also need to require the CSS file from this package (or provide your own). The example below shows how to include the CSS from this package if your build system supports requiring CSS files (Webpack is one that does).
 
 ```js
-import React from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -31,30 +37,12 @@ import "react-datepicker/dist/react-datepicker.css";
 // CSS Modules, react-datepicker-cssmodules.css
 // import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 
-class Example extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      startDate: new Date()
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(date) {
-    this.setState({
-      startDate: date
-    });
-  }
-
-  render() {
-    return (
-      <DatePicker
-        selected={this.state.startDate}
-        onChange={this.handleChange}
-      />
-    );
-  }
-}
+const Example = () => {
+  const [startDate, setStartDate] = useState(new Date());
+  return (
+    <DatePicker selected={startDate} onChange={date => setStartDate(date)} />
+  );
+};
 ```
 
 ## Configuration
@@ -62,16 +50,16 @@ class Example extends React.Component {
 The most basic use of the DatePicker can be described with:
 
 ```js
-<DatePicker selected={this.state.date} onChange={this.handleChange} />
+<DatePicker selected={startdate} onChange={date => setStartDate(date)} />
 ```
 
 You can use `onSelect` event handler which fires each time some calendar date has been selected
 
 ```js
 <DatePicker
-  selected={this.state.date}
-  onSelect={this.handleSelect} //when day is clicked
-  onChange={this.handleChange} //only when value has changed
+  selected={date}
+  onSelect={handleDateSelect} //when day is clicked
+  onChange={handleDateChange} //only when value has changed
 />
 ```
 
@@ -85,8 +73,8 @@ You can also include a time picker by adding the showTimeSelect prop
 
 ```js
 <DatePicker
-  selected={this.state.date}
-  onChange={this.handleChange}
+  selected={date}
+  onChange={handleDateChange}
   showTimeSelect
   dateFormat="Pp"
 />
@@ -117,7 +105,6 @@ registerLocale('es', es)
 Locales can be changed in the following way:
 
 - **Globally** - `setDefaultLocale('es');`
- 
 
 ## Compatibility
 
@@ -127,7 +114,8 @@ We're always trying to stay compatible with the latest version of React. We can'
 
 Latest compatible versions:
 
-- React 15.5 or newer: All above React-datepicker v.0.40.0
+- React 16 or newer: React-datepicker v2.9.4 and newer
+- React 15.5: React-datepicker v2.9.3
 - React 15.4.1: needs React-datepicker v0.40.0, newer won't work (due to react-onclickoutside dependencies)
 - React 0.14 or newer: All above React-datepicker v0.13.0
 - React 0.13: React-datepicker v0.13.0
@@ -135,7 +123,7 @@ Latest compatible versions:
 
 ### Moment.js
 
-Up until version 1.8.0, this package was using Moment.js. Starting v2.0.0, we switched to using native Date objects to reduce the size of the package. If you're switching from 1.8.0 to 2.0.0 or higher, please see the updated example above of check out the [examples site](https://reactdatepicker.com) for up to date examples.
+Up until version 1.8.0, this package was using Moment.js. Starting v2.0.0, we switched to using `date-fns`, which uses native Date objects, to reduce the size of the package. If you're switching from 1.8.0 to 2.0.0 or higher, please see the updated example above of check out the [examples site](https://reactdatepicker.com) for up to date examples.
 
 ### Browser Support
 
@@ -145,7 +133,15 @@ Unfortunately, it is difficult to support legacy browsers while maintaining our 
 
 ## Local Development
 
-The `master` branch contains the latest version of the Datepicker component. To start your example app, you can run `yarn start`. This starts a simple webserver on http://localhost:8080.
+The `master` branch contains the latest version of the Datepicker component.
+
+To begin local development:
+
+1. `yarn install`
+2. `yarn build-dev`
+3. `yarn start`
+
+The last step starts documentation app as a simple webserver on http://localhost:3000.
 
 You can run `yarn test` to execute the test suite and linters. To help you develop the component we’ve set up some tests that cover the basic functionality (can be found in `/tests`). Even though we’re big fans of testing, this only covers a small piece of the component. We highly recommend you add tests when you’re adding new functionality.
 
@@ -167,6 +163,12 @@ The examples are hosted within the docs folder and are ran in the simple app tha
 - _End_: Move to the next year.
 - _Enter/Esc/Tab_: close the calendar. (Enter & Esc calls preventDefault)
 
+#### For month picker
+
+- _Left_: Move to the previous month.
+- _Right_: Move to the next month.
+- _Enter_: Select date and close the calendar
+
 ## License
 
-Copyright (c) 2018 HackerOne Inc. and individual contributors. Licensed under MIT license, see [LICENSE](LICENSE) for the full license.
+Copyright (c) 2014-2021 HackerOne Inc. and individual contributors. Licensed under MIT license, see [LICENSE](LICENSE) for the full license.

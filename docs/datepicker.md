@@ -5,6 +5,10 @@ General datepicker component.
 | name                         | type                           | default value   | description                                |
 | ---------------------------- | ------------------------------ | --------------- | ------------------------------------------ |
 | `allowSameDay`               | `bool`                         | `false`         |                                            |
+| `ariaDescribedBy`            | `string`                       | `null`          |                                            |
+| `ariaInvalid`                | `string`                       | `null`          |                                            |
+| `ariaLabelledBy`             | `string`                       | `null`          |                                            |
+| `ariaRequired`               | `string`                       | `null`          |                                            |
 | `autoComplete`               | `string`                       |                 |                                            |
 | `autoFocus`                  | `bool`                         |                 |                                            |
 | `calendarClassName`          | `string`                       |                 |                                            |
@@ -13,16 +17,19 @@ General datepicker component.
 | `clearButtonTitle`           | `string`                       |                 |                                            |
 | `customInput`                | `element`                      |                 |                                            |
 | `customInputRef`             | `string`                       | `'ref'`         | The property used to pass the ref callback |
-| `dateFormat`                 | `union(string\|array)`         | `'MM/dd/yyyy'`           |                                            |
+| `dateFormat`                 | `union(string\|array)`         | `'MM/dd/yyyy'`  |                                            |
 | `dateFormatCalendar`         | `string`                       | `'LLLL yyyy'`   |                                            |
 | `dayClassName`               | `func`                         |                 |                                            |
+| `weekDayClassName`           | `func`                         |                 |                                            |
 | `disabled`                   | `bool`                         | `false`         |                                            |
 | `disabledKeyboardNavigation` | `bool`                         | `false`         |                                            |
 | `dropdownMode` (required)    | `enum('scroll'\|'select')`     | `'scroll'`      |                                            |
 | `endDate`                    | `instanceOf(Date)`             |                 |                                            |
 | `excludeDates`               | `array`                        |                 |                                            |
 | `excludeTimes`               | `array`                        |                 |                                            |
+| `excludeScrollbar`           | `array`                        |                 |                                            |
 | `filterDate`                 | `func`                         |                 |                                            |
+| `filterTime`                 | `func`                         |                 |                                            |
 | `fixedHeight`                | `bool`                         |                 |                                            |
 | `forceShowMonthNavigation`   | `bool`                         |                 |                                            |
 | `formatWeekNumber`           | `func`                         |                 |                                            |
@@ -41,15 +48,17 @@ General datepicker component.
 | `monthsShown`                | `number`                       | `1`             |                                            |
 | `name`                       | `string`                       |                 |                                            |
 | `onBlur`                     | `func`                         | `function() {}` |                                            |
+| `onCalendarClose`            | `func`                         |                 |                                            |
+| `onCalendarOpen`             | `func`                         |                 |                                            |
 | `onChange` (required)        | `func`                         | `function() {}` |                                            |
 | `onChangeRaw`                | `func`                         |                 |                                            |
 | `onClickOutside`             | `func`                         | `function() {}` |                                            |
 | `onFocus`                    | `func`                         | `function() {}` |                                            |
 | `onKeyDown`                  | `func`                         | `function() {}` |                                            |
 | `onMonthChange`              | `func`                         | `function() {}` |                                            |
-| `onYearChange`               | `func`                         | `function() {}` |                                            |
 | `onSelect`                   | `func`                         | `function() {}` |                                            |
 | `onWeekSelect`               | `func`                         |                 |                                            |
+| `onYearChange`               | `func`                         | `function() {}` |                                            |
 | `openToDate`                 | `instanceOf(Date)`             |                 |                                            |
 | `peekNextMonth`              | `bool`                         |                 |                                            |
 | `placeholderText`            | `string`                       |                 |                                            |
@@ -71,6 +80,7 @@ General datepicker component.
 | `startDate`                  | `instanceOf(Date)`             |                 |                                            |
 | `startOpen`                  | `bool`                         |                 |                                            |
 | `tabIndex`                   | `number`                       |                 |                                            |
+| `timeClassName`              | `func`                         |                 |                                            |
 | `timeFormat`                 | `string`                       |                 |                                            |
 | `timeIntervals`              | `number`                       | `30`            |                                            |
 | `title`                      | `string`                       |                 |                                            |
@@ -80,4 +90,7 @@ General datepicker component.
 | `value`                      | `string`                       |                 |                                            |
 | `weekLabel`                  | `string`                       |                 |                                            |
 | `withPortal`                 | `bool`                         | `false`         |                                            |
+| `wrapperClassName`           | `string`                       |                 
+|                                            |
+| `yearItemNumber`             | `number`                       | `12`            |                                            |
 | `yearDropdownItemNumber`     | `number`                       |                 |                                            |

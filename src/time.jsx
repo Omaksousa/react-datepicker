@@ -3,35 +3,20 @@ import PropTypes from "prop-types";
 import {
   getHours,
   getMinutes,
+  setHours,
+  setMinutes,
   newDate,
   getStartOfDay,
   addMinutes,
   formatDate,
+  isBefore,
+  isEqual,
   isTimeInDisabledRange,
   isTimeDisabled,
   timesToInjectAfter
 } from "./date_utils";
 
 export default class Time extends React.Component {
-  static propTypes = {
-    format: PropTypes.string,
-    includeTimes: PropTypes.array,
-    intervals: PropTypes.number,
-    selected: PropTypes.instanceOf(Date),
-    onChange: PropTypes.func,
-    todayButton: PropTypes.node,
-    minTime: PropTypes.instanceOf(Date),
-    maxTime: PropTypes.instanceOf(Date),
-    excludeTimes: PropTypes.array,
-    monthRef: PropTypes.object,
-    timeCaption: PropTypes.string,
-    injectTimes: PropTypes.array,
-    locale: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.shape({ locale: PropTypes.object })
-    ])
-  };
-
   static get defaultProps() {
     return {
       intervals: 30,
@@ -45,6 +30,29 @@ export default class Time extends React.Component {
     return (
       centerLiRef.offsetTop - (listHeight / 2 - centerLiRef.clientHeight / 2)
     );
+  };
+
+  static propTypes = {
+    format: PropTypes.string,
+    includeTimes: PropTypes.array,
+    intervals: PropTypes.number,
+    selected: PropTypes.instanceOf(Date),
+    openToDate: PropTypes.instanceOf(Date),
+    onChange: PropTypes.func,
+    timeClassName: PropTypes.func,
+    todayButton: PropTypes.node,
+    minTime: PropTypes.instanceOf(Date),
+    maxTime: PropTypes.instanceOf(Date),
+    excludeTimes: PropTypes.array,
+    filterTime: PropTypes.func,
+    monthRef: PropTypes.object,
+    timeCaption: PropTypes.string,
+    injectTimes: PropTypes.array,
+    locale: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({ locale: PropTypes.object })
+    ]),
+    showTimeSelectOnly: PropTypes.bool
   };
 
   state = {
@@ -70,10 +78,8 @@ export default class Time extends React.Component {
     if (
       ((this.props.minTime || this.props.maxTime) &&
         isTimeInDisabledRange(time, this.props)) ||
-      (this.props.excludeTimes &&
-        isTimeDisabled(time, this.props.excludeTimes)) ||
-      (this.props.includeTimes &&
-        !isTimeDisabled(time, this.props.includeTimes))
+      ((this.props.excludeTimes || this.props.includeTimes || this.props.filterTime) &&
+        isTimeDisabled(time, this.props))
     ) {
       return;
     }
@@ -81,18 +87,25 @@ export default class Time extends React.Component {
   };
 
   liClasses = (time, currH, currM) => {
-    let classes = ["react-datepicker__time-list-item"];
+    let classes = [
+      "react-datepicker__time-list-item",
+      this.props.timeClassName
+        ? this.props.timeClassName(time, currH, currM)
+        : undefined
+    ];
 
-    if (currH === getHours(time) && currM === getMinutes(time)) {
+    if (
+      this.props.selected &&
+      currH === getHours(time) &&
+      currM === getMinutes(time)
+    ) {
       classes.push("react-datepicker__time-list-item--selected");
     }
     if (
       ((this.props.minTime || this.props.maxTime) &&
         isTimeInDisabledRange(time, this.props)) ||
-      (this.props.excludeTimes &&
-        isTimeDisabled(time, this.props.excludeTimes)) ||
-      (this.props.includeTimes &&
-        !isTimeDisabled(time, this.props.includeTimes))
+      ((this.props.excludeTimes || this.props.includeTimes || this.props.filterTime) &&
+        isTimeDisabled(time, this.props))
     ) {
       classes.push("react-datepicker__time-list-item--disabled");
     }
@@ -110,16 +123,21 @@ export default class Time extends React.Component {
     let times = [];
     const format = this.props.format ? this.props.format : "p";
     const intervals = this.props.intervals;
-    const activeTime = this.props.selected ? this.props.selected : newDate();
-    const currH = getHours(activeTime);
-    const currM = getMinutes(activeTime);
-    let base = getStartOfDay(newDate());
+
+    const base = getStartOfDay(newDate(this.props.selected));
     const multiplier = 1440 / intervals;
     const sortedInjectTimes =
       this.props.injectTimes &&
       this.props.injectTimes.sort(function(a, b) {
         return a - b;
       });
+
+    const activeDate =
+      this.props.selected || this.props.openToDate || newDate();
+    const currH = getHours(activeDate);
+    const currM = getMinutes(activeDate);
+    const activeTime = setHours(setMinutes(base, currM), currH);
+
     for (let i = 0; i < multiplier; i++) {
       const currentTime = addMinutes(base, i * intervals);
       times.push(currentTime);
@@ -142,13 +160,11 @@ export default class Time extends React.Component {
         onClick={this.handleClick.bind(this, time)}
         className={this.liClasses(time, currH, currM)}
         ref={li => {
-          if (
-            (currH === getHours(time) && currM === getMinutes(time)) ||
-            (currH === getHours(time) && !this.centerLi)
-          ) {
+          if (isBefore(time, activeTime) || isEqual(time, activeTime)) {
             this.centerLi = li;
           }
         }}
+        tabIndex="0"
       >
         {formatDate(time, format, this.props.locale)}
       </li>
@@ -167,7 +183,7 @@ export default class Time extends React.Component {
         }`}
       >
         <div
-          className="react-datepicker__header react-datepicker__header--time"
+          className={`react-datepicker__header react-datepicker__header--time ${this.props.showTimeSelectOnly ? 'react-datepicker__header--time--only' : ''}`}
           ref={header => {
             this.header = header;
           }}
@@ -184,8 +200,9 @@ export default class Time extends React.Component {
                 this.list = list;
               }}
               style={height ? { height } : {}}
+              tabIndex="0"
             >
-              {this.renderTimes.bind(this)()}
+              {this.renderTimes()}
             </ul>
           </div>
         </div>

@@ -54,6 +54,107 @@ describe("TimePicker", () => {
     expect(datePicker.state.open).to.be.true;
   });
 
+  it("should show different colors for times", () => {
+    const handleTimeColors = (time, currH, currM) => {
+      if (!Number.isInteger(currH) || !Number.isInteger(currM)) {
+        return "wrong";
+      }
+      return time.getHours() < 12 ? "red" : "green";
+    };
+    const timePicker = TestUtils.renderIntoDocument(
+      <DatePicker
+        showTimeSelect
+        showTimeSelectOnly
+        timeClassName={handleTimeColors}
+        onChange={() => console.log("changed")}
+        open
+        focus
+      />
+    );
+    let redItems = TestUtils.scryRenderedDOMComponentsWithClass(
+      timePicker,
+      "react-datepicker__time-list-item red"
+    );
+    let greenItems = TestUtils.scryRenderedDOMComponentsWithClass(
+      timePicker,
+      "react-datepicker__time-list-item green"
+    );
+    assert.isTrue(
+      redItems !== undefined &&
+        redItems.length === 24 &&
+        greenItems !== undefined &&
+        greenItems.length === 24
+    );
+  });
+
+  it("should handle 40 min time intervals", () => {
+    renderDatePicker("February 28, 2018 9:00 AM", {
+      timeIntervals: 40,
+      showTimeSelect: true
+    });
+    expect(getInputString()).to.equal("February 28, 2018 9:00 AM");
+
+    ReactDOM.findDOMNode(datePicker.input).focus();
+
+    setManually("February 28, 2018 9:20 AM");
+    expect(getInputString()).to.equal("February 28, 2018 9:20 AM");
+  });
+
+  it("should handle 53 min time intervals", () => {
+    renderDatePicker("February 28, 2018 9:00 AM", {
+      timeIntervals: 53,
+      showTimeSelect: true
+    });
+    expect(getInputString()).to.equal("February 28, 2018 9:00 AM");
+
+    ReactDOM.findDOMNode(datePicker.input).focus();
+
+    setManually("February 28, 2018 9:53 AM");
+    expect(getInputString()).to.equal("February 28, 2018 9:53 AM");
+  });
+
+  it("should handle 90 min time intervals", () => {
+    renderDatePicker("July 13, 2020 2:59 PM", {
+      timeIntervals: 90,
+      showTimeSelect: true
+    });
+    expect(getInputString()).to.equal("July 13, 2020 2:59 PM");
+
+    ReactDOM.findDOMNode(datePicker.input).focus();
+
+    setManually("July 13, 2020 3:00 PM");
+    expect(getInputString()).to.equal("July 13, 2020 3:00 PM");
+  });
+
+  it("should not contain the time only classname in header by default", () => {
+    const timePicker = TestUtils.renderIntoDocument(
+      <DatePicker
+        open
+        showTimeSelect
+      />
+    );
+    const header = TestUtils.scryRenderedDOMComponentsWithClass(
+      timePicker,
+      "react-datepicker__header--time--only"
+    );
+    expect(header).to.have.length(0);
+  });
+
+  it("should contain the time only classname in header if enabled", () => {
+    const timePicker = TestUtils.renderIntoDocument(
+      <DatePicker
+        open
+        showTimeSelect
+        showTimeSelectOnly
+      />
+    );
+    const header = TestUtils.scryRenderedDOMComponentsWithClass(
+      timePicker,
+      "react-datepicker__header--time--only"
+    );
+    expect(header).to.have.length(1);
+  });
+
   function setManually(string) {
     TestUtils.Simulate.focus(datePicker.input);
     TestUtils.Simulate.change(datePicker.input, { target: { value: string } });
@@ -63,11 +164,11 @@ describe("TimePicker", () => {
     return ReactDOM.findDOMNode(datePicker.input).value;
   }
 
-  function renderDatePicker(string) {
-    return renderDatePickerFor(new Date(string));
+  function renderDatePicker(string, props) {
+    return renderDatePickerFor(new Date(string), props);
   }
 
-  function renderDatePickerFor(selected) {
+  function renderDatePickerFor(selected, props) {
     datePicker = ReactDOM.render(
       <DatePicker
         selected={selected}
@@ -75,6 +176,7 @@ describe("TimePicker", () => {
         allowSameDay
         onChange={onChange}
         showTimeSelect
+        {...props}
       />,
       div
     );

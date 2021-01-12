@@ -4,8 +4,10 @@ import PropTypes from "prop-types";
 export default class inputTime extends React.Component {
   static propTypes = {
     onChange: PropTypes.func,
+    date: PropTypes.instanceOf(Date),
     timeString: PropTypes.string,
-    timeInputLabel: PropTypes.string
+    timeInputLabel: PropTypes.string,
+    customTimeInput: PropTypes.element
   };
 
   constructor(props) {
@@ -16,6 +18,17 @@ export default class inputTime extends React.Component {
     };
   }
 
+  static getDerivedStateFromProps(props, state) {
+    if (props.timeString !== state.time) {
+      return {
+        time: props.timeString
+      };
+    }
+
+    // Return null to indicate no change to state.
+    return null;
+  }
+
   onTimeChange = time => {
     this.setState({ time });
     const date = new Date();
@@ -24,9 +37,34 @@ export default class inputTime extends React.Component {
     this.props.onChange(date);
   };
 
-  render() {
+  renderTimeInput = () => {
     const { time } = this.state;
-    const { timeString } = this.props;
+    const { date, timeString, customTimeInput } = this.props;
+
+    if (customTimeInput) {
+      return React.cloneElement(customTimeInput, {
+        date,
+        value: time,
+        onChange: this.onTimeChange
+      });
+    }
+
+    return (
+      <input
+        type="time"
+        className="react-datepicker-time__input"
+        placeholder="Time"
+        name="time-input"
+        required
+        value={time}
+        onChange={ev => {
+          this.onTimeChange(ev.target.value || timeString);
+        }}
+      />
+    );
+  };
+
+  render() {
     return (
       <div className="react-datepicker__input-time-container">
         <div className="react-datepicker-time__caption">
@@ -34,17 +72,7 @@ export default class inputTime extends React.Component {
         </div>
         <div className="react-datepicker-time__input-container">
           <div className="react-datepicker-time__input">
-            <input
-              type="time"
-              className="react-datepicker-time__input"
-              placeholder="Time"
-              name="time-input"
-              required
-              value={time}
-              onChange={ev => {
-                this.onTimeChange(ev.target.value || timeString);
-              }}
-            />
+            {this.renderTimeInput()}
           </div>
         </div>
       </div>

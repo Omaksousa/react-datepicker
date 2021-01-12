@@ -1,13 +1,16 @@
 import React from "react";
+import defer from "lodash/defer";
 import { mount, shallow } from "enzyme";
 import DatePicker from "../src/index.jsx";
 import InputTimeComponent from "../src/inputTime";
+import CustomTimeInput from "./helper_components/custom_time_input";
+import { newDate } from "../src/date_utils.js";
 
-describe("DatePicker", () => {
+describe("timeInput", () => {
   let sandbox;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
+    sandbox = sinon.createSandbox();
   });
 
   afterEach(() => {
@@ -44,5 +47,57 @@ describe("DatePicker", () => {
     const input = timeComponent.find("input");
     input.simulate("change", { target: { value: "" } });
     expect(timeComponent.state("time")).to.equal("13:00");
+  });
+
+  it("should trigger onChange event on a custom time input without using the last valid timeString", () => {
+    const timeComponent = shallow(
+      <InputTimeComponent
+        timeString="13:00"
+        onChange={console.log}
+        customTimeInput={<CustomTimeInput />}
+      />
+    );
+
+    const input = timeComponent.find("CustomTimeInput");
+    input.simulate("change", "14:00");
+    expect(timeComponent.state("time")).to.equal("14:00");
+  });
+
+  it("should pass pure Date to custom time input", done => {
+    const onTimeChangeSpy = sandbox.spy();
+    const timeComponent = mount(
+      <InputTimeComponent
+        date={new Date()}
+        timeString="13:00"
+        onChange={console.log}
+        customTimeInput={
+          <CustomTimeInput onTimeChange={onTimeChangeSpy} />
+        }
+      />
+    );
+
+    const input = timeComponent.find("CustomTimeInput");
+    input.simulate("change", "14:00");
+
+    defer(() => {
+      assert(onTimeChangeSpy.called === true, "should call CustomTimeInput onChange");
+      assert(Object.prototype.toString.call(onTimeChangeSpy.args[0][0]) === "[object Date]", "should pass pure date to CustomTimeInput onChange");
+      done();
+    });
+  });
+
+  it ('should update input value if time is updated from outside', done => {
+    const timeComponent = mount(
+      <InputTimeComponent
+        date={new Date()}
+        timeString="13:00"
+        onChange={console.log}
+      />
+    );
+
+    expect(timeComponent.find("input").props.value).to.equal('13:00');
+
+    timeComponent.setProps({ timeString: '14:00' });
+    expect(timeComponent.find("input").props.value).to.equal('14:00');
   });
 });

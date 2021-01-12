@@ -88,7 +88,6 @@ export default class YearDropdownOptions extends React.Component {
       options.unshift(
         <div
           className="react-datepicker__year-option"
-          ref={"upcoming"}
           key={"upcoming"}
           onClick={this.incrementYears}
         >
@@ -101,7 +100,6 @@ export default class YearDropdownOptions extends React.Component {
       options.push(
         <div
           className="react-datepicker__year-option"
-          ref={"previous"}
           key={"previous"}
           onClick={this.decrementYears}
         >
