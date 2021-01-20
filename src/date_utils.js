@@ -143,11 +143,16 @@ export function formatDate(date, formatStr, locale, type, comp) {
     const hijri = date.toHijri();
     const year = hijri.year;
     const month = hijri.month;
-    return `${year} ${HIJRI_MONTHS[month - 1]}`;
+   const MonthsLabel = locale === 'ar'? HIJRI_MONTHS: HIJRI_MONTHS_EN;
+    return `${year} ${MonthsLabel[month - 1]}`;
   }
-
+  
   if (comp === "header") {
-    return `${format(date, "yyyy")} ${AR_MONTH[date.getMonth()]}`;
+    if(locale === "ar"){
+      return `${format(date, "yyyy")} ${AR_MONTH[date.getMonth()]}`;
+    }else{
+      return `${format(date, "yyyy")} ${EN_MONTH[date.getMonth()]}`;
+    }
   }
 
   if (locale === "en") {
@@ -402,11 +407,15 @@ export function getWeekdayShortInLocale(date, locale) {
 
 export function getMonthInLocale(month, locale, calendar) {
   let res;
-  if (calendar === CALDENDAR_TYPES.HIJRI) {
-    res = HIJRI_MONTHS[month];
-  } else {
-    res = MONTH_TO_AR[formatDate(setMonth(newDate(), month), "LLLL", locale)];
-  }
+  if(locale === "ar"){
+    if (calendar === CALDENDAR_TYPES.HIJRI) {
+      res = HIJRI_MONTHS[month];
+    } else {
+      res = MONTH_TO_AR[formatDate(setMonth(newDate(), month), "LLLL", locale)];
+    }
+  }else{
+    return formatDate(setMonth(newDate(), month), "LLLL", locale);
+  }  
   return res;
 }
 
@@ -731,6 +740,21 @@ const MONTH_TO_AR = {
   December: "ديسمبر"
 };
 
+const EN_MONTH = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+]
+
 const AR_MONTH = [
   "يناير",
   "فبرابر",
@@ -771,7 +795,7 @@ export const HIJRI_MONTHS = [
   "ذي الحجة"
 ];
 
-export const HIJRI_MONTHS_En = [
+export const HIJRI_MONTHS_EN = [
   "Muharram",
   "Safar",
   "Rabi I",

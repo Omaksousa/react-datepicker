@@ -61,7 +61,7 @@ const isDropdownSelect = (element = {}) => {
 export default class Calendar extends React.Component {
   static get defaultProps() {
     return {
-      onDropdownFocus: () => { },
+      onDropdownFocus: () => {},
       monthsShown: 1,
       monthSelectedIn: 0,
       forceShowMonthNavigation: false,
@@ -286,7 +286,7 @@ export default class Calendar extends React.Component {
   handleDayClick = (day, event, monthSelectedIn) => {
     this.props.onSelect(day, event, monthSelectedIn);
     this.props.setPreSelection && this.props.setPreSelection(day);
-  }
+  }   
 
   handleDayMouseEnter = day => {
     this.setState({ selectingDate: day });
@@ -583,7 +583,6 @@ export default class Calendar extends React.Component {
     if (this.props.showMonthYearDropdown) {
       classes.push("react-datepicker__current-month--hasMonthYearDropdown");
     }
-    // console.log(this.props)
     return (
       <div className={classes.join(" ")}>
         {formatDate(
@@ -663,13 +662,13 @@ export default class Calendar extends React.Component {
       <div className="react-datepicker__footer">
         {isHijri ? (
           <button onClick={() => this.props.onCalendarTypeChange(nextType)}>
-            {this.props.hijriButtonLabel || "Show Gregorian Calendar"}
+            {this.props.hijriButtonLabel || this.props.locale === "ar" ? "عرض التقويم الميلادي": "Show Gregorian Calendar"}
           </button>
         ) : (
-            <button onClick={() => this.props.onCalendarTypeChange(nextType)}>
-              {this.props.gregorianButtonLabel || "Show Hijri Calendar"}
-            </button>
-          )}
+          <button onClick={() => this.props.onCalendarTypeChange(nextType)}>
+            {this.props.gregorianButtonLabel || this.props.locale === "ar" ? "عرض التقويم الهجري" : "Show Hijri Calendar"}
+          </button>
+        )}
       </div>
     );
   };
