@@ -55,7 +55,7 @@ import toDate from "date-fns/toDate";
 import parse from "date-fns/parse";
 import parseISO from "date-fns/parseISO";
 import longFormatters from "date-fns/esm/_lib/format/longFormatters";
-import 'hijri-date';
+import "hijri-date";
 
 export const DEFAULT_YEAR_ITEM_NUMBER = 12;
 
@@ -79,12 +79,11 @@ export function parseDate(value, dateFormat, locale, strictParsing) {
   let localeObject = getLocaleObject(locale) || getDefaultLocale();
   let strictParsingValueMatch = true;
   if (Array.isArray(dateFormat)) {
-    dateFormat.forEach(df => {
+    dateFormat.forEach((df) => {
       let tryParseDate = parse(value, df, new Date(), { locale: localeObject });
       if (strictParsing) {
         strictParsingValueMatch =
-          isValid(tryParseDate) &&
-          value === format(tryParseDate, df, { awareOfUnicodeTokens: true });
+          isValid(tryParseDate) && value === format(tryParseDate, df, { awareOfUnicodeTokens: true });
       }
       if (isValid(tryParseDate) && strictParsingValueMatch) {
         parsedDate = tryParseDate;
@@ -97,18 +96,15 @@ export function parseDate(value, dateFormat, locale, strictParsing) {
 
   if (strictParsing) {
     strictParsingValueMatch =
-      isValid(parsedDate) &&
-      value === format(parsedDate, dateFormat, { awareOfUnicodeTokens: true });
+      isValid(parsedDate) && value === format(parsedDate, dateFormat, { awareOfUnicodeTokens: true });
   } else if (!isValid(parsedDate)) {
     dateFormat = dateFormat
       .match(longFormattingTokensRegExp)
-      .map(function(substring) {
+      .map(function (substring) {
         var firstCharacter = substring[0];
         if (firstCharacter === "p" || firstCharacter === "P") {
           var longFormatter = longFormatters[firstCharacter];
-          return localeObject
-            ? longFormatter(substring, localeObject.formatLong)
-            : firstCharacter;
+          return localeObject ? longFormatter(substring, localeObject.formatLong) : firstCharacter;
         }
         return substring;
       })
@@ -143,14 +139,14 @@ export function formatDate(date, formatStr, locale, type, comp) {
     const hijri = date.toHijri();
     const year = hijri.year;
     const month = hijri.month;
-   const MonthsLabel = locale === 'ar'? HIJRI_MONTHS: HIJRI_MONTHS_EN;
+    const MonthsLabel = locale === "ar" ? HIJRI_MONTHS : HIJRI_MONTHS_EN;
     return `${year} ${MonthsLabel[month - 1]}`;
   }
-  
+
   if (comp === "header") {
-    if(locale === "ar"){
+    if (locale === "ar") {
       return `${format(date, "yyyy")} ${AR_MONTH[date.getMonth()]}`;
-    }else{
+    } else {
       return `${format(date, "yyyy")} ${EN_MONTH[date.getMonth()]}`;
     }
   }
@@ -160,33 +156,19 @@ export function formatDate(date, formatStr, locale, type, comp) {
   }
   let localeObj = getLocaleObject(locale);
   if (locale && !localeObj) {
-    console.warn(
-      `A locale object was not found for the provided string ["${locale}"].`
-    );
+    console.warn(`A locale object was not found for the provided string ["${locale}"].`);
   }
-  if (
-    !localeObj &&
-    !!getDefaultLocale() &&
-    !!getLocaleObject(getDefaultLocale())
-  ) {
+  if (!localeObj && !!getDefaultLocale() && !!getLocaleObject(getDefaultLocale())) {
     localeObj = getLocaleObject(getDefaultLocale());
   }
   return format(date, formatStr, {
     locale: localeObj ? localeObj : null,
-    awareOfUnicodeTokens: true
+    awareOfUnicodeTokens: true,
   });
 }
 
 export function safeDateFormat(date, { dateFormat, locale }) {
-  return (
-    (date &&
-      formatDate(
-        date,
-        Array.isArray(dateFormat) ? dateFormat[0] : dateFormat,
-        locale
-      )) ||
-    ""
-  );
+  return (date && formatDate(date, Array.isArray(dateFormat) ? dateFormat[0] : dateFormat, locale)) || "";
 }
 
 // ** Date Setters **
@@ -202,44 +184,25 @@ export { setMinutes, setHours, setMonth, setQuarter, setYear };
 // getDay Returns day of week, getDate returns day of month
 
 function getYear(date, calendar) {
-  return calendar === CALENDAR_TYPES.HIJRI
-    ? date.toHijri().year
-    : fnsGetYear(date);
+  return calendar === CALENDAR_TYPES.HIJRI ? date.toHijri().year : fnsGetYear(date);
 }
 
 function getMonth(date, calendar) {
-  return calendar === CALENDAR_TYPES.HIJRI
-    ? date.toHijri().month
-    : fnsGetMonth(date);
+  return calendar === CALENDAR_TYPES.HIJRI ? date.toHijri().month : fnsGetMonth(date);
 }
 
 function getDate(date, calendar) {
-  return calendar === CALENDAR_TYPES.HIJRI
-    ? date.toHijri().date
-    : fnsGetDate(date);
+  return calendar === CALENDAR_TYPES.HIJRI ? date.toHijri().date : fnsGetDate(date);
 }
 
 function hijriToGregorian(hijri) {
   return new HijriDate(hijri).toGregorian();
 }
 
-export {
-  getSeconds,
-  getMinutes,
-  getHours,
-  getMonth,
-  getQuarter,
-  getYear,
-  getDay,
-  getDate,
-  getTime,
-  hijriToGregorian
-};
+export { getSeconds, getMinutes, getHours, getMonth, getQuarter, getYear, getDay, getDate, getTime, hijriToGregorian };
 
 export function getWeek(date, locale) {
-  let localeObj =
-    (locale && getLocaleObject(locale)) ||
-    (getDefaultLocale() && getLocaleObject(getDefaultLocale()));
+  let localeObj = (locale && getLocaleObject(locale)) || (getDefaultLocale() && getLocaleObject(getDefaultLocale()));
   return dfgetWeek(date, localeObj ? { locale: localeObj } : null);
 }
 
@@ -254,9 +217,7 @@ export function getStartOfDay(date) {
 }
 
 export function getStartOfWeek(date, locale) {
-  let localeObj = locale
-    ? getLocaleObject(locale)
-    : getLocaleObject(getDefaultLocale());
+  let localeObj = locale ? getLocaleObject(locale) : getLocaleObject(getDefaultLocale());
   return startOfWeek(date, { locale: localeObj });
 }
 
@@ -407,15 +368,15 @@ export function getWeekdayShortInLocale(date, locale) {
 
 export function getMonthInLocale(month, locale, calendar) {
   let res;
-  if(locale === "ar"){
+  if (locale === "ar") {
     if (calendar === CALDENDAR_TYPES.HIJRI) {
       res = HIJRI_MONTHS[month];
     } else {
       res = MONTH_TO_AR[formatDate(setMonth(newDate(), month), "LLLL", locale)];
     }
-  }else{
+  } else {
     return formatDate(setMonth(newDate(), month), "LLLL", locale);
-  }  
+  }
   return res;
 }
 
@@ -429,39 +390,25 @@ export function getQuarterShortInLocale(quarter, locale) {
 
 // ** Utils for some components **
 
-export function isDayDisabled(
-  day,
-  { minDate, maxDate, excludeDates, includeDates, filterDate } = {}
-) {
+export function isDayDisabled(day, { minDate, maxDate, excludeDates, includeDates, filterDate } = {}) {
   return (
     isOutOfBounds(day, { minDate, maxDate }) ||
-    (excludeDates &&
-      excludeDates.some(excludeDate => isSameDay(day, excludeDate))) ||
-    (includeDates &&
-      !includeDates.some(includeDate => isSameDay(day, includeDate))) ||
+    (excludeDates && excludeDates.some((excludeDate) => isSameDay(day, excludeDate))) ||
+    (includeDates && !includeDates.some((includeDate) => isSameDay(day, includeDate))) ||
     (filterDate && !filterDate(newDate(day))) ||
     false
   );
 }
 
 export function isDayExcluded(day, { excludeDates } = {}) {
-  return (
-    (excludeDates &&
-      excludeDates.some(excludeDate => isSameDay(day, excludeDate))) ||
-    false
-  );
+  return (excludeDates && excludeDates.some((excludeDate) => isSameDay(day, excludeDate))) || false;
 }
 
-export function isMonthDisabled(
-  month,
-  { minDate, maxDate, excludeDates, includeDates, filterDate } = {}
-) {
+export function isMonthDisabled(month, { minDate, maxDate, excludeDates, includeDates, filterDate } = {}) {
   return (
     isOutOfBounds(month, { minDate, maxDate }) ||
-    (excludeDates &&
-      excludeDates.some(excludeDate => isSameMonth(month, excludeDate))) ||
-    (includeDates &&
-      !includeDates.some(includeDate => isSameMonth(month, includeDate))) ||
+    (excludeDates && excludeDates.some((excludeDate) => isSameMonth(month, excludeDate))) ||
+    (includeDates && !includeDates.some((includeDate) => isSameMonth(month, includeDate))) ||
     (filterDate && !filterDate(newDate(month))) ||
     false
   );
@@ -484,16 +431,11 @@ export function isMonthinRange(startDate, endDate, m, day) {
   }
 }
 
-export function isQuarterDisabled(
-  quarter,
-  { minDate, maxDate, excludeDates, includeDates, filterDate } = {}
-) {
+export function isQuarterDisabled(quarter, { minDate, maxDate, excludeDates, includeDates, filterDate } = {}) {
   return (
     isOutOfBounds(quarter, { minDate, maxDate }) ||
-    (excludeDates &&
-      excludeDates.some(excludeDate => isSameQuarter(quarter, excludeDate))) ||
-    (includeDates &&
-      !includeDates.some(includeDate => isSameQuarter(quarter, includeDate))) ||
+    (excludeDates && excludeDates.some((excludeDate) => isSameQuarter(quarter, excludeDate))) ||
+    (includeDates && !includeDates.some((includeDate) => isSameQuarter(quarter, includeDate))) ||
     (filterDate && !filterDate(newDate(quarter))) ||
     false
   );
@@ -523,16 +465,12 @@ export function isQuarterInRange(startDate, endDate, q, day) {
 
 export function isOutOfBounds(day, { minDate, maxDate } = {}) {
   return (
-    (minDate && differenceInCalendarDays(day, minDate) < 0) ||
-    (maxDate && differenceInCalendarDays(day, maxDate) > 0)
+    (minDate && differenceInCalendarDays(day, minDate) < 0) || (maxDate && differenceInCalendarDays(day, maxDate) > 0)
   );
 }
 
 export function isTimeInList(time, times) {
-  return times.some(listTime => (
-    getHours(listTime) === getHours(time) &&
-    getMinutes(listTime) === getMinutes(time)
-  ));
+  return times.some((listTime) => getHours(listTime) === getHours(time) && getMinutes(listTime) === getMinutes(time));
 }
 
 export function isTimeDisabled(time, { excludeTimes, includeTimes, filterTime } = {}) {
@@ -550,14 +488,8 @@ export function isTimeInDisabledRange(time, { minTime, maxTime }) {
   }
   const base = newDate();
   const baseTime = setHours(setMinutes(base, getMinutes(time)), getHours(time));
-  const min = setHours(
-    setMinutes(base, getMinutes(minTime)),
-    getHours(minTime)
-  );
-  const max = setHours(
-    setMinutes(base, getMinutes(maxTime)),
-    getHours(maxTime)
-  );
+  const min = setHours(setMinutes(base, getMinutes(minTime)), getHours(minTime));
+  const max = setHours(setMinutes(base, getMinutes(maxTime)), getHours(maxTime));
 
   let valid;
   try {
@@ -572,11 +504,7 @@ export function monthDisabledBefore(day, { minDate, includeDates } = {}) {
   const previousMonth = subMonths(day, 1);
   return (
     (minDate && differenceInCalendarMonths(minDate, previousMonth) > 0) ||
-    (includeDates &&
-      includeDates.every(
-        includeDate =>
-          differenceInCalendarMonths(includeDate, previousMonth) > 0
-      )) ||
+    (includeDates && includeDates.every((includeDate) => differenceInCalendarMonths(includeDate, previousMonth) > 0)) ||
     false
   );
 }
@@ -585,10 +513,7 @@ export function monthDisabledAfter(day, { maxDate, includeDates } = {}) {
   const nextMonth = addMonths(day, 1);
   return (
     (maxDate && differenceInCalendarMonths(nextMonth, maxDate) > 0) ||
-    (includeDates &&
-      includeDates.every(
-        includeDate => differenceInCalendarMonths(nextMonth, includeDate) > 0
-      )) ||
+    (includeDates && includeDates.every((includeDate) => differenceInCalendarMonths(nextMonth, includeDate) > 0)) ||
     false
   );
 }
@@ -597,10 +522,7 @@ export function yearDisabledBefore(day, { minDate, includeDates } = {}) {
   const previousYear = subYears(day, 1);
   return (
     (minDate && differenceInCalendarYears(minDate, previousYear) > 0) ||
-    (includeDates &&
-      includeDates.every(
-        includeDate => differenceInCalendarYears(includeDate, previousYear) > 0
-      )) ||
+    (includeDates && includeDates.every((includeDate) => differenceInCalendarYears(includeDate, previousYear) > 0)) ||
     false
   );
 }
@@ -616,10 +538,7 @@ export function yearDisabledAfter(day, { maxDate, includeDates } = {}) {
   const nextYear = addYears(day, 1);
   return (
     (maxDate && differenceInCalendarYears(nextYear, maxDate) > 0) ||
-    (includeDates &&
-      includeDates.every(
-        includeDate => differenceInCalendarYears(nextYear, includeDate) > 0
-      )) ||
+    (includeDates && includeDates.every((includeDate) => differenceInCalendarYears(nextYear, includeDate) > 0)) ||
     false
   );
 }
@@ -633,9 +552,7 @@ export function yearsDisabledAfter(day, { maxDate, yearItemNumber = DEFAULT_YEAR
 
 export function getEffectiveMinDate({ minDate, includeDates }) {
   if (includeDates && minDate) {
-    let minDates = includeDates.filter(
-      includeDate => differenceInCalendarDays(includeDate, minDate) >= 0
-    );
+    let minDates = includeDates.filter((includeDate) => differenceInCalendarDays(includeDate, minDate) >= 0);
     return min(minDates);
   } else if (includeDates) {
     return min(includeDates);
@@ -646,9 +563,7 @@ export function getEffectiveMinDate({ minDate, includeDates }) {
 
 export function getEffectiveMaxDate({ maxDate, includeDates }) {
   if (includeDates && maxDate) {
-    let maxDates = includeDates.filter(
-      includeDate => differenceInCalendarDays(includeDate, maxDate) <= 0
-    );
+    let maxDates = includeDates.filter((includeDate) => differenceInCalendarDays(includeDate, maxDate) <= 0);
     return max(maxDates);
   } else if (includeDates) {
     return max(includeDates);
@@ -657,10 +572,7 @@ export function getEffectiveMaxDate({ maxDate, includeDates }) {
   }
 }
 
-export function getHightLightDaysMap(
-  highlightDates = [],
-  defaultClassName = "react-datepicker__day--highlighted"
-) {
+export function getHightLightDaysMap(highlightDates = [], defaultClassName = "react-datepicker__day--highlighted") {
   const dateClasses = new Map();
   for (let i = 0, len = highlightDates.length; i < len; i++) {
     const obj = highlightDates[i];
@@ -691,29 +603,14 @@ export function getHightLightDaysMap(
   return dateClasses;
 }
 
-export function timesToInjectAfter(
-  startOfDay,
-  currentTime,
-  currentMultiplier,
-  intervals,
-  injectedTimes
-) {
+export function timesToInjectAfter(startOfDay, currentTime, currentMultiplier, intervals, injectedTimes) {
   const l = injectedTimes.length;
   const times = [];
   for (let i = 0; i < l; i++) {
-    const injectedTime = addMinutes(
-      addHours(startOfDay, getHours(injectedTimes[i])),
-      getMinutes(injectedTimes[i])
-    );
-    const nextTime = addMinutes(
-      startOfDay,
-      (currentMultiplier + 1) * intervals
-    );
+    const injectedTime = addMinutes(addHours(startOfDay, getHours(injectedTimes[i])), getMinutes(injectedTimes[i]));
+    const nextTime = addMinutes(startOfDay, (currentMultiplier + 1) * intervals);
 
-    if (
-      isAfter(injectedTime, currentTime) &&
-      isBefore(injectedTime, nextTime)
-    ) {
+    if (isAfter(injectedTime, currentTime) && isBefore(injectedTime, nextTime)) {
       times.push(injectedTimes[i]);
     }
   }
@@ -737,7 +634,7 @@ const MONTH_TO_AR = {
   September: "سبتمبر",
   October: "أوكتوبر",
   November: "نوفمبر",
-  December: "ديسمبر"
+  December: "ديسمبر",
 };
 
 const EN_MONTH = [
@@ -753,7 +650,7 @@ const EN_MONTH = [
   "October",
   "November",
   "December",
-]
+];
 
 const AR_MONTH = [
   "يناير",
@@ -765,9 +662,9 @@ const AR_MONTH = [
   "يوليو",
   "أغسطس",
   "سبتمبر",
-  "أوكتوبر",
+  "أكتوبر",
   "نوفمبر",
-  "ديسمبر"
+  "ديسمبر",
 ];
 
 export const WEEK_DAY_TO_AR = {
@@ -777,7 +674,7 @@ export const WEEK_DAY_TO_AR = {
   Tu: "الثلاثاء",
   We: "الأربعاء",
   Th: "الخميس",
-  Fr: "الجمعة"
+  Fr: "الجمعة",
 };
 
 export const HIJRI_MONTHS = [
@@ -792,7 +689,7 @@ export const HIJRI_MONTHS = [
   "رمضان",
   "شوال",
   "ذي القعدة",
-  "ذي الحجة"
+  "ذي الحجة",
 ];
 
 export const HIJRI_MONTHS_EN = [
@@ -807,7 +704,7 @@ export const HIJRI_MONTHS_EN = [
   "Ramadan",
   "Shawwal",
   "Dhu al-Qidah",
-  "Dhu al-Hijjah"
+  "Dhu al-Hijjah",
 ];
 
 export const CALENDAR_TYPES = { GREGORIAN: "gregorian", HIJRI: "hijri" };
